@@ -1,0 +1,42 @@
+# This file configures the analyzer, which statically analyzes Dart code to
+# check for errors, warnings, and lints.
+#
+# The issues identified by the analyzer are surfaced in the UI of Dart-enabled
+# IDEs (https://dart.dev/tools#ides-and-editors). The analyzer can also be
+# invoked from the command line by running `flutter analyze`.
+
+# The following line activates a set of recommended lints for Flutter apps,
+# packages, and plugins designed to encourage good coding practices.
+include: package:lints/recommended.yaml
+
+analyzer:
+  exclude: [build/**]
+  language:
+    #Strict-casts: Quando definido como true, esse lint irá sinalizar quando houver uma conversão explícita de tipo que pode ser evitada. Por exemplo, converter um int em um double quando o double é esperado. Quando definido como false, o lint não irá sinalizar essas conversões.
+    strict-casts: true
+    #Strict-inference: Quando definido como true, esse lint irá sinalizar quando a inferência de tipo é muito genérica, ou seja, quando o tipo inferido é dynamic. Quando definido como false, o lint não irá sinalizar esses casos.
+    strict-inference: false
+    #strict-raw-types: Quando definido como true, esse lint irá sinalizar o uso de tipos genéricos sem especificar os tipos dos argumentos. Por exemplo, usar List em vez de List<String>. Quando definido como false, o lint não irá sinalizar esses casos.
+    strict-raw-types: false
+
+  errors:
+    unnecessary_await_in_return: error
+    unnecessary_new: error
+    empty_statements: error
+    list_remove_unrelated_type: error
+    await_only_futures: error
+    dead_code: error
+    no_duplicate_case_values: error
+    iterable_contains_unrelated_type: error
+    null_check_on_nullable_type_parameter: error
+    unreachable_from_main: error
+    always_declare_return_types: error
+    dead_null_aware_expression: error
+    deprecated_member_use_from_same_package: warning
+    body_might_complete_normally_nullable: error
+    body_might_complete_normally_catch_error: error
+    async_keyword_used_as_identifier: error
+    async_for_in_wrong_context: error
+    avoid_annotating_with_dynamic: warning
+    avoid_empty_else: error
+    void_checks: error
