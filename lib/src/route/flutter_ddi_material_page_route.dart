@@ -1,8 +1,8 @@
 import 'package:dart_ddi/dart_ddi.dart';
 import 'package:flutter/material.dart';
 
-class DDIMaterialPageRoute<RouteType extends Object> extends MaterialPageRoute<RouteType> {
-  DDIMaterialPageRoute({
+class FlutterDDIMaterialPageRoute<RouteType extends Object> extends MaterialPageRoute<RouteType> {
+  FlutterDDIMaterialPageRoute({
     required super.builder,
     RouteSettings? settings,
     super.maintainState,

@@ -1,8 +1,8 @@
 import 'package:dart_ddi/dart_ddi.dart';
 import 'package:flutter/cupertino.dart';
 
-class DDICupertinoPageRoute<RouteType extends Object> extends CupertinoPageRoute<RouteType> {
-  DDICupertinoPageRoute({
+class FlutterDDICupertinoPageRoute<RouteType extends Object> extends CupertinoPageRoute<RouteType> {
+  FlutterDDICupertinoPageRoute({
     required super.builder,
     RouteSettings? settings,
     super.maintainState,

@@ -5,25 +5,25 @@ import 'package:flutter_ddi/flutter_ddi.dart';
 
 abstract class FlutterModule with DDIModule {
   @override
-  Object get moduleQualifier => '/${runtimeType.toString()}';
+  Object get moduleQualifier => '/$runtimeType';
 
   WidgetBuilder get view;
 
   void registerPage<BeanT extends Object>(
     FutureOr<BeanT> Function() clazzRegister, {
-    Object? qualifier,
-    void Function()? postConstruct,
+    Object? pageName,
+    VoidCallback? postConstruct,
     List<BeanT Function(BeanT)>? decorators,
     List<DDIInterceptor<BeanT> Function()>? interceptors,
     FutureOr<bool> Function()? registerIf,
     bool destroyable = true,
   }) {
-    inject.addChildModules(child: qualifier ?? '/$BeanT', qualifier: moduleQualifier);
+    //inject.addChildModules(child: pageName ?? '/$BeanT', qualifier: moduleQualifier);
 
     knowRoutes.addAll({
       '/$BeanT': () => inject.registerApplication<BeanT>(
             clazzRegister,
-            qualifier: qualifier ?? '/$BeanT',
+            qualifier: pageName ?? '/$BeanT',
             postConstruct: postConstruct,
             decorators: decorators,
             interceptors: interceptors,
@@ -33,5 +33,6 @@ abstract class FlutterModule with DDIModule {
     });
   }
 
-  Map<String, void Function()> knowRoutes = {};
+  ///Should return a WidgetBuilder or void
+  Map<String, dynamic Function()> knowRoutes = {};
 }

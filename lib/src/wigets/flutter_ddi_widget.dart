@@ -1,18 +1,18 @@
 import 'package:dart_ddi/dart_ddi.dart';
 import 'package:flutter/material.dart';
 
-final class FlutterDDIModule<BeanT extends Object> extends StatefulWidget {
-  const FlutterDDIModule({required this.module, required this.child, this.moduleName, super.key});
+final class FlutterDDIWidget<BeanT extends Object> extends StatefulWidget {
+  const FlutterDDIWidget({required this.module, required this.child, this.moduleName, super.key});
 
   final Widget child;
   final BeanT Function() module;
   final String? moduleName;
 
   @override
-  State<FlutterDDIModule> createState() => _FlutterDDIModuleState<BeanT>();
+  State<FlutterDDIWidget> createState() => _FlutterDDIWidgetState<BeanT>();
 }
 
-class _FlutterDDIModuleState<BeanT extends Object> extends State<FlutterDDIModule> {
+class _FlutterDDIWidgetState<BeanT extends Object> extends State<FlutterDDIWidget> {
   @override
   void initState() {
     super.initState();
@@ -21,7 +21,7 @@ class _FlutterDDIModuleState<BeanT extends Object> extends State<FlutterDDIModul
 
   @override
   void dispose() {
-    DDI.instance.destroy<BeanT>();
+    DDI.instance.destroy<BeanT>(qualifier: widget.moduleName);
     super.dispose();
   }
 

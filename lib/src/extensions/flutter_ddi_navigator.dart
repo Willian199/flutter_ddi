@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/widgets.dart';
 
-extension DDINavigator on NavigatorState {
+extension FlutterDDINavigator on NavigatorState {
   Future pushType<DestinyType extends Object>({
     Object? arguments,
   }) {
@@ -61,5 +61,9 @@ extension DDINavigator on NavigatorState {
     Object? arguments,
   }) {
     return restorablePushReplacementNamed('/$DestinyType', result: result, arguments: arguments);
+  }
+
+  void popUntilType<DestinyType extends Object>() {
+    popUntil(ModalRoute.withName('/$DestinyType'));
   }
 }
