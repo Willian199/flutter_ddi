@@ -15,8 +15,8 @@ final class FlutterDDIWidget<BeanT extends Object> extends StatefulWidget {
 class _FlutterDDIWidgetState<BeanT extends Object> extends State<FlutterDDIWidget> {
   @override
   void initState() {
+    DDI.instance.registerSingleton<BeanT>(widget.module as BeanT Function(), qualifier: widget.moduleName);
     super.initState();
-    DDI.instance.registerApplication<BeanT>(widget.module as BeanT Function(), qualifier: widget.moduleName);
   }
 
   @override

@@ -1,6 +1,7 @@
 import 'package:dart_ddi/dart_ddi.dart';
 import 'package:flutter/widgets.dart';
 
+//Recommended for most cases
 abstract class SingletonState<StateType extends StatefulWidget, BeanType extends Object> extends State<StateType> {
   SingletonState(BeanType Function() clazzRegister) {
     DDI.instance.registerSingleton(clazzRegister);

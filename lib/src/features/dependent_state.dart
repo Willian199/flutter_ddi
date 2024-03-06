@@ -1,6 +1,7 @@
 import 'package:dart_ddi/dart_ddi.dart';
 import 'package:flutter/widgets.dart';
 
+//Be Aware about registering the same instances more than once
 abstract class DependentState<StateType extends StatefulWidget, BeanType extends Object> extends State<StateType> {
   DependentState(BeanType Function() clazzRegister) {
     _isModule = clazzRegister is DDIModule Function();
