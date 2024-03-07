@@ -19,6 +19,7 @@ class _FlutterDDIModuleLoaderState extends State<FlutterDDIModuleLoader> {
   late Object qualifier;
   @override
   void initState() {
+    debugPrint('Loading module ${widget.module.moduleQualifier}');
     DDI.instance.registerObject(widget.module, qualifier: widget.module.moduleQualifier);
 
     super.initState();
@@ -26,6 +27,7 @@ class _FlutterDDIModuleLoaderState extends State<FlutterDDIModuleLoader> {
 
   @override
   void dispose() {
+    debugPrint('Destroying module ${widget.module.moduleQualifier}');
     DDI.instance.destroy(qualifier: widget.module.moduleQualifier);
 
     super.dispose();

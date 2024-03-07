@@ -10,5 +10,33 @@ abstract class FlutterDDIModule extends FlutterDDIModuleDefine with DDIModule {
 }
 
 abstract class FlutterDDIPage extends FlutterDDIModuleDefine {
-  Widget get page;
+  factory FlutterDDIPage.from({required String path, required WidgetBuilder page}) {
+    return _FactoryFlutterDDIPage(path, page);
+  }
+
+  FlutterDDIPage();
+
+  WidgetBuilder get page;
+}
+
+class _FactoryFlutterDDIPage extends FlutterDDIPage {
+  _FactoryFlutterDDIPage(String path, WidgetBuilder page) {
+    _path = path;
+    _page = page;
+  }
+
+  late String _path;
+  late WidgetBuilder _page;
+
+  @override
+  String get path => _path;
+
+  @override
+  WidgetBuilder get page => _page;
+}
+
+abstract class FlutterDDIModuleRouter extends FlutterDDIModuleDefine {
+  WidgetBuilder get page;
+
+  List<FlutterDDIModuleDefine> get modules;
 }
