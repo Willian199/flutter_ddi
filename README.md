@@ -1,6 +1,6 @@
-# flutter_ddi
+# Flutter DDI Library
 
-The `flutter_ddi` is a package for Flutter that simplifies and enhances integration with `dart_ddi`, a dependency injection manager for Dart. This package is designed to facilitate the dependency injection process in your Flutter application, making it cleaner, organized, and easy to maintain.
+The `flutter_ddi` is a package for Flutter that simplifies and enhances integration with [`dart_ddi`](https://github.com/Willian199/dart_ddi), a dependency injection manager for Dart. This package is designed to facilitate the dependency injection process in your Flutter application, making it cleaner, organized, and easy to maintain.
 
 ## Features
 
