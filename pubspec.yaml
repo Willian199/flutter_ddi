@@ -1,5 +1,5 @@
 name: flutter_ddi
-description: "A new Flutter package project."
+description: "A Flutter package for easy and clean dependency injection management, enhancing code organization and flexibility."
 version: 0.0.1
 homepage: https://github.com/Willian199/flutter_ddi
 issue_tracker: https://github.com/Willian199/flutter_ddi/issues
