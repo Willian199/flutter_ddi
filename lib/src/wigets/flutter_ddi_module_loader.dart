@@ -1,7 +1,11 @@
 import 'package:dart_ddi/dart_ddi.dart';
 import 'package:flutter/widgets.dart';
 
+/// Widget that loads a module with dependency injection.
+/// This widget is used to load a module's page with its dependencies resolved.
 class FlutterDDIModuleLoader extends StatefulWidget {
+  /// The `module` parameter is the module to be loaded.
+  /// The `page` parameter is the page builder associated with the module.
   const FlutterDDIModuleLoader({
     required this.module,
     required this.page,
@@ -16,19 +20,22 @@ class FlutterDDIModuleLoader extends StatefulWidget {
 }
 
 class _FlutterDDIModuleLoaderState extends State<FlutterDDIModuleLoader> {
-  late Object qualifier;
   @override
   void initState() {
-    debugPrint('Loading module ${widget.module.moduleQualifier}');
-    DDI.instance.registerObject(widget.module, qualifier: widget.module.moduleQualifier);
+    // Sometimes if you navigate so fast to the same route, the dispose isn't called.
+    if (ddi.isRegistered(qualifier: widget.module.moduleQualifier)) {
+      ddi.destroy(qualifier: widget.module.moduleQualifier);
+    }
+    // Register the module with its qualifier when the widget is initialized
+    ddi.registerObject(widget.module, qualifier: widget.module.moduleQualifier);
 
     super.initState();
   }
 
   @override
   void dispose() {
-    debugPrint('Destroying module ${widget.module.moduleQualifier}');
-    DDI.instance.destroy(qualifier: widget.module.moduleQualifier);
+    // Destroy the registered module when the widget is disposed
+    ddi.destroy(qualifier: widget.module.moduleQualifier);
 
     super.dispose();
   }

@@ -1,10 +1,13 @@
 import 'package:dart_ddi/dart_ddi.dart';
 import 'package:flutter/widgets.dart';
 
+/// Abstract class representing the application state.
+/// This class should be extended when you want to register and manage dependencies with DDI.
 abstract class ApplicationState<StateType extends StatefulWidget, BeanType extends Object> extends State<StateType> {
+  /// The `clazzRegister` function should return the instance of the bean to be registered.
   ApplicationState(BeanType Function() clazzRegister) {
     _isModule = clazzRegister is DDIModule Function();
-    DDI.instance.registerApplication(clazzRegister);
+    ddi.registerApplication(clazzRegister);
   }
 
   late bool _isModule;
@@ -12,15 +15,16 @@ abstract class ApplicationState<StateType extends StatefulWidget, BeanType exten
   @override
   void initState() {
     super.initState();
-    //Auto load the module
+    // Auto load the module if it's a module type
     if (_isModule) {
-      DDI.instance.get<BeanType>();
+      ddi.get<BeanType>();
     }
   }
 
   @override
   void dispose() {
-    DDI.instance.destroy<BeanType>();
+    // Destroy the registered module
+    ddi.destroy<BeanType>();
     super.dispose();
   }
 }

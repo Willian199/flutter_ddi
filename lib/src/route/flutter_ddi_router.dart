@@ -1,7 +1,11 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_ddi/flutter_ddi.dart';
 
+/// Class responsible for generating routes from modules.
+/// This class generates routes based on modules for the Flutter app.
 final class FlutterDDIRouter {
+  /// Get routes from a list of modules.
+  /// This method creates routes based on the provided list of modules.
   static Map<String, WidgetBuilder> getRoutes({required List<FlutterDDIModuleDefine> modules}) {
     return Map.fromEntries(modules.expand((module) => _buildModules(module).entries));
   }
@@ -12,6 +16,8 @@ final class FlutterDDIRouter {
     if (extraPath?.isNotEmpty ?? false) {
       path = '$extraPath$path';
     }
+
+    path = path.replaceAll('//', '/');
 
     return switch (module) {
       (final FlutterDDIPage m) => {path: m.page},
