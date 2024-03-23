@@ -16,9 +16,9 @@ The `flutter_ddi` offers a range of features that can be easily integrated into 
 
 ## Using flutter_ddi
 
-### Defining Modules and Routes
+## Defining Modules and Routes
 
-#### `FlutterDDIPage`
+### FlutterDDIPage
 The `FlutterDDIPage` class allows defining pages that do not have any dependencies.
 
 Example Usage:
@@ -47,7 +47,7 @@ class HomeModule extends FlutterDDIPage {
 }
 ```
 
-#### `FlutterDDIModule`
+### FlutterDDIModule
 The `FlutterDDIModule` class is an abstraction that allows defining a module to organize and encapsulate specific dependencies.
 
 Example Usage:
@@ -70,7 +70,7 @@ class HomeModule extends FlutterDDIModule {
 }
 ```
 
-#### `FlutterDDIModuleRouter`
+### FlutterDDIModuleRouter
 The `FlutterDDIModuleRouter` class is used to define routes that contain modules. With it, you can organize the application navigation in a modular way, facilitating code maintenance and expansion.
 
 Example Usage:
@@ -120,7 +120,7 @@ class SplashModule extends FlutterDDIModuleRouter with DDIModule {
 }
 ```
 
-### Using the `FlutterDDIRouter`
+## Using the FlutterDDIRouter
 
 The `FlutterDDIRouter` class is a utility that allows building application routes from the defined modules and pages. With it, you can get a map of routes ready to be used with the Flutter Navigator.
 
@@ -147,9 +147,9 @@ class MyApp extends StatelessWidget {
 }
 ```
 
-### Navigation-related Classes
+## Navigation-related Classes
 
-#### `FlutterDDICupertinoPageRoute`
+### FlutterDDICupertinoPageRoute
 The `FlutterDDICupertinoPageRoute` class is an extension of `CupertinoPageRoute` that allows registering a module for the route.
 
 Example Usage:
@@ -164,7 +164,7 @@ Example Usage:
     );
 ```
 
-#### `FlutterDDIMaterialPageRoute`
+### FlutterDDIMaterialPageRoute
 The `FlutterDDIMaterialPageRoute` class is an extension of `MaterialPageRoute` that allows registering a module for the route.
 
 Example Usage:
@@ -179,11 +179,11 @@ Example Usage:
     );
 ```
 
-### Simplified State Management
+## Simplified State Management
 
 Managing state in Flutter applications, especially for medium or smaller projects, doesn't always require complex state management solutions. For apps where simplicity and efficiency are key, using these mixins and classes for state management can be a straightforward and effective approach. But for larger and complex projects, it's recommended to use a proper state management solutions.
 
-#### How It Works
+### How It Works
 Under the hood, these mixins and classes utilize the `setState` method to update the widget's state. They handle registering an event or stream in the `initState` and cleaning up in the `dispose` method.
 
 #### Example Usage:
@@ -225,9 +225,9 @@ Under the hood, these mixins and classes utilize the `setState` method to update
     }
 ```
 
-### Widget Classes
+## Widget Classes
 
-#### `ApplicationState`, `DependentState`, `SingletonState`
+#### ApplicationState, DependentState, SingletonState
 These are abstract classes that help manage the lifecycle of a dependency for a widget. The difference between the three classes is the behavior of the instace that will be registered, where the type will be the second parameter passed in the class declaration.
 
 Example Usage:
@@ -245,7 +245,7 @@ Example Usage:
     }
 ```
 
-#### `Extension FlutterDDIContext`
+## Extension FlutterDDIContext
 The `FlutterDDIContext` extension provides a `get` and `arguments` method on the `BuildContext` class. 
 The `get` method allows getting a dependency from the context. 
 The `arguments` method allows getting the arguments passed in the route.
