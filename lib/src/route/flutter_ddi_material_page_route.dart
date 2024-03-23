@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 
 /// Custom MaterialPageRoute with dependency injection.
 /// This route allows injecting dependencies into the specified page.
-class FlutterDDIMaterialPageRoute<RouteType extends Object> extends MaterialPageRoute<RouteType> {
+class FlutterDDIMaterialPageRoute<RouteType extends Object>
+    extends MaterialPageRoute<RouteType> {
   /// The `module` parameter is a function returning an instance of the route's module.
   /// This route can register the module using the DDI.
   FlutterDDIMaterialPageRoute({

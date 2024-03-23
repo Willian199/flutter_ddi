@@ -1,3 +1,11 @@
+## 0.0.2
+
+* Bumpped `dart_ddi` to 0.6.1.
+* Improved documentation and code organization.
+* Added ability to retrieve route data from context with `FlutterDDIContext` extesion.
+* Added `EventListener` and `StreamListener` mixins.
+* Added `EventListenerState` and `StreamListenerState` abstract classes.
+
 ## 0.0.1
 
 * Initial release of `flutter_ddi` package.

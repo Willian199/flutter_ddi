@@ -3,7 +3,8 @@ import 'package:flutter/cupertino.dart';
 
 /// Custom CupertinoPageRoute with dependency injection.
 /// This route allows injecting dependencies into the specified page.
-class FlutterDDICupertinoPageRoute<RouteType extends Object> extends CupertinoPageRoute<RouteType> {
+class FlutterDDICupertinoPageRoute<RouteType extends Object>
+    extends CupertinoPageRoute<RouteType> {
   /// The `module` parameter is a function returning an instance of the route's module.
   /// This route can register the module using the DDI.
   FlutterDDICupertinoPageRoute({

@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 /// This class should be extended to define the path of a module.
 sealed class FlutterDDIModuleDefine {
   /// Get the path of the module.
+  /// Used to define the route of the module.
   String get path => '$runtimeType';
 }
 
@@ -19,7 +20,8 @@ abstract class FlutterDDIModule extends FlutterDDIModuleDefine with DDIModule {
 /// This class should be extended to define a page with dependency injection.
 abstract class FlutterDDIPage extends FlutterDDIModuleDefine {
   /// Factory method to create a FlutterDDIPage.
-  factory FlutterDDIPage.from({required String path, required WidgetBuilder page}) {
+  factory FlutterDDIPage.from(
+      {required String path, required WidgetBuilder page}) {
     return _FactoryFlutterDDIPage(path, page);
   }
 
@@ -53,6 +55,6 @@ abstract class FlutterDDIModuleRouter extends FlutterDDIModuleDefine {
   /// Get the page associated with the module.
   WidgetBuilder get page;
 
-  /// Get the list of modules.
+  /// Get the list of modules associated with the router.
   List<FlutterDDIModuleDefine> get modules;
 }

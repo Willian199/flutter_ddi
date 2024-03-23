@@ -58,8 +58,8 @@ class HomeModule extends FlutterDDIModule {
   @override
   FutureOr<void> onPostConstruct() {
     registerApplication<HomeRepository>(() => HomeRepositoryImpl());
-    registerApplication<HomeService>(() => HomeServiceImpl(homeRepository: inject()));
-    registerApplication<HomeController>(() => HomeControllerHomeServiceImpl(homeService: inject<HomeService>()));
+    registerApplication<HomeService>(() => HomeServiceImpl(homeRepository: ddi()));
+    registerApplication<HomeController>(() => HomeControllerHomeServiceImpl(homeService: ddi<HomeService>()));
   }
 
   @override
@@ -122,7 +122,6 @@ class SplashModule extends FlutterDDIModuleRouter with DDIModule {
 
 ### Using the `FlutterDDIRouter`
 
-#### `FlutterDDIRouter`
 The `FlutterDDIRouter` class is a utility that allows building application routes from the defined modules and pages. With it, you can get a map of routes ready to be used with the Flutter Navigator.
 
 Example Usage:
@@ -180,6 +179,52 @@ Example Usage:
     );
 ```
 
+### Simplified State Management
+
+Managing state in Flutter applications, especially for medium or smaller projects, doesn't always require complex state management solutions. For apps where simplicity and efficiency are key, using these mixins and classes for state management can be a straightforward and effective approach. But for larger and complex projects, it's recommended to use a proper state management solutions.
+
+#### How It Works
+Under the hood, these mixins and classes utilize the `setState` method to update the widget's state. They handle registering an event or stream in the `initState` and cleaning up in the `dispose` method.
+
+#### Example Usage:
+
+```dart
+    class HomePage extends StatefulWidget {
+        const HomePage({super.key});
+
+        @override
+        State<HomePage> createState() => _HomePageState();
+    }
+
+    /// You can extend `StreamListenerState` or `EventListenerState`
+    class _HomePageState extends StreamListenerState<HomePage, HomePageModel> {
+    // class _HomePageState extends EventListenerState<HomePage, HomePageModel> {
+
+      Widget build(BuildContext context) {
+          return Text('Welcome ${state.name} ${state.surname}');
+      } 
+    }
+```
+
+```dart
+    class HomePage extends StatefulWidget {
+        const HomePage({super.key});
+
+        @override
+        State<HomePage> createState() => _HomePageState();
+    }
+
+    /// Using can use the mixin `StreamListener` or `EventListener`
+    class _HomePageState extends State<HomePage> with StreamListener<HomePage, HomePageModel> {
+    // class _HomePageState extends State<HomePage> with EventListener<HomePage, HomePageModel> {
+
+      Widget build(BuildContext context) {
+          return Text('Welcome ${state.name} ${state.surname}');
+      }
+      
+    }
+```
+
 ### Widget Classes
 
 #### `ApplicationState`, `DependentState`, `SingletonState`
@@ -201,7 +246,9 @@ Example Usage:
 ```
 
 #### `Extension FlutterDDIContext`
-The `FlutterDDIContext` extension provides a `get` method that can be used in `BuildContext` to get an instance of a specific type.
+The `FlutterDDIContext` extension provides a `get` and `arguments` method on the `BuildContext` class. 
+The `get` method allows getting a dependency from the context. 
+The `arguments` method allows getting the arguments passed in the route.
 
 Example Usage:
 
@@ -211,7 +258,9 @@ Example Usage:
 
         @override
         Widget build(BuildContext context) {
-            final controller = context.get<HomePageController>();
+            final HomePageController controller = context.get<HomePageController>();
+
+            final RouteArguments routeData = context.arguments<RouteArguments>();
 
             return Container();
         }

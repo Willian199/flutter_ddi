@@ -12,7 +12,10 @@ class FlutterDDIModuleLoader extends StatefulWidget {
     super.key,
   });
 
+  /// The module to be loaded.
   final DDIModule module;
+
+  /// The page builder associated with the module.
   final WidgetBuilder page;
 
   @override
@@ -22,11 +25,18 @@ class FlutterDDIModuleLoader extends StatefulWidget {
 class _FlutterDDIModuleLoaderState extends State<FlutterDDIModuleLoader> {
   @override
   void initState() {
-    // Sometimes if you navigate so fast to the same route, the dispose isn't called.
+    /// - Sometimes if you navigate so fast to the same route, the dispose wasn't called yet.
+    /// So we check if the module is already registered and if it is, we destroy it.
+    ///
+    /// - If you need to register the module multiple times, you should use the `moduleQualifier` parameter.
+    /// This is to ensure that the module is only registered once.
+    ///
+    /// - If you don't provide a `moduleQualifier`, the module will be registered with its default qualifier.
     if (ddi.isRegistered(qualifier: widget.module.moduleQualifier)) {
       ddi.destroy(qualifier: widget.module.moduleQualifier);
     }
-    // Register the module with its qualifier when the widget is initialized
+
+    /// Register the module with its qualifier when the widget is initialized
     ddi.registerObject(widget.module, qualifier: widget.module.moduleQualifier);
 
     super.initState();
@@ -35,6 +45,7 @@ class _FlutterDDIModuleLoaderState extends State<FlutterDDIModuleLoader> {
   @override
   void dispose() {
     // Destroy the registered module when the widget is disposed
+    // If you don't provide a `moduleQualifier`, the module will be destroyed with its default qualifier
     ddi.destroy(qualifier: widget.module.moduleQualifier);
 
     super.dispose();
