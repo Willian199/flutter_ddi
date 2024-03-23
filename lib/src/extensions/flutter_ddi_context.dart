@@ -7,7 +7,8 @@ extension FlutterDDIContext on BuildContext {
   /// @param [BeanT] The type of the dependency to retrieve.
   /// @param [Object? qualifier] The qualifier of the dependency to retrieve.
   ///
-  BeanT get<BeanT extends Object>([Object? qualifier]) => ddi.get<BeanT>(qualifier: qualifier);
+  BeanT get<BeanT extends Object>([Object? qualifier]) =>
+      ddi.get<BeanT>(qualifier: qualifier);
 
   /// Extension method to simplify retrieving data from the current route.
   /// @param [RouteArgumentT] The type of the data to retrieve.
