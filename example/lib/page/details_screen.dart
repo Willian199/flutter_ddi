@@ -3,7 +3,7 @@ import 'package:example/model/detail.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ddi/flutter_ddi.dart';
 
-class DetailsScreen extends StatelessWidget with DDIController<Detail> {
+class DetailsScreen extends StatelessWidget with DDIInject<Detail> {
   DetailsScreen({super.key});
 
   @override
@@ -14,7 +14,7 @@ class DetailsScreen extends StatelessWidget with DDIController<Detail> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(controller.message),
+            Text(instance.message),
             ElevatedButton(
               onPressed: () {
                 Navigator.of(context).pop();
