@@ -1,3 +1,8 @@
+## 0.0.3
+* Bumped `dart_ddi` to 0.6.2.
+* Fixed exports.
+* Added `FlutterDDIFutureWidget` and `FlutterDDIFutureModuleRouter`.
+
 ## 0.0.2
 
 * Bumpped `dart_ddi` to 0.6.1.

@@ -1,5 +1,5 @@
 import 'package:dart_ddi/dart_ddi.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 
 /// Sealed class representing the definition of a module.
 /// This class should be extended to define the path of a module.
@@ -57,4 +57,19 @@ abstract class FlutterDDIModuleRouter extends FlutterDDIModuleDefine {
 
   /// Get the list of modules associated with the router.
   List<FlutterDDIModuleDefine> get modules;
+}
+
+abstract class FlutterDDIFutureModuleRouter extends FlutterDDIModuleDefine
+    with DDIModule {
+  /// Get the page associated with the module.
+  WidgetBuilder get page;
+
+  /// Get the list of modules associated with the router.
+  List<FlutterDDIModuleDefine> get modules => [];
+
+  /// The error widget to be displayed if the module fails to be registered.
+  Widget get error => const SizedBox.shrink();
+
+  /// The loading widget to be displayed while the module is being registered.
+  Widget get loading => const Center(child: CircularProgressIndicator());
 }

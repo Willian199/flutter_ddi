@@ -120,6 +120,41 @@ class SplashModule extends FlutterDDIModuleRouter with DDIModule {
 }
 ```
 
+### FlutterDDIFutureModuleRouter
+The `FlutterDDIFutureModuleRouter` class is used to create modules that have `Future` loading. Making it possible to `await` for initialization before accessing the route
+
+Example Usage:
+
+```dart
+class SplashModule extends FlutterDDIFutureModuleRouter {
+
+  @override
+  Future<void> onPostConstruct() async{
+    await registerSingleton<Databaseconnection>(() async => Databaseconnection());
+  }
+
+  @override
+  WidgetBuilder get page => (_) => const SplashPage();
+
+  @override
+  String get path => '/';
+
+  @override
+  List<FlutterDDIModuleDefine> get modules => [
+    FlutterDDIPage.from(path: 'signup', page: (_) => const SignupPage()),
+    LoginModule(),
+    HomeModule(),
+  ];
+
+  @override
+  Widget get error => const SizedBox.shrink();
+
+  @override
+  Widget get loading => const Center(child: CircularProgressIndicator());
+
+}
+```
+
 ## Using the FlutterDDIRouter
 
 The `FlutterDDIRouter` class is a utility that allows building application routes from the defined modules and pages. With it, you can get a map of routes ready to be used with the Flutter Navigator.
@@ -227,7 +262,7 @@ Under the hood, these mixins and classes utilize the `setState` method to update
 
 ## Widget Classes
 
-#### ApplicationState, DependentState, SingletonState
+### ApplicationState, DependentState, SingletonState
 These are abstract classes that help manage the lifecycle of a dependency for a widget. The difference between the three classes is the behavior of the instace that will be registered, where the type will be the second parameter passed in the class declaration.
 
 Example Usage:
@@ -242,6 +277,38 @@ Example Usage:
 
     class _HomePageState extends ApplicationState<HomePage, HomePageController> {
         _HomePageState(super.clazzRegister);
+    }
+```
+
+### FlutterDDIWidget e FlutterDDIFutureWidget
+
+These two widgets handle dependency injection seamlessly. The `FlutterDDIWidget` handles dependency injection by wrapping a child widget and registering its module. Similarly, the `FlutterDDIFutureWidget` handles dependency injection by wrapping a future builder and registering its module asynchronously.
+
+Example Usage:
+
+```dart
+    class HomePage extends StatelessWidget {
+        const HomePage({super.key});
+
+        @override
+        Widget build(BuildContext context) {
+            return Column(
+                children: [
+                    FlutterDDIWidget<BeanT>(
+                      module: WidgetModule.new,
+                      child: const MyWidget(),
+                      moduleName: 'WidgetModule',
+                    ),
+                    FlutterDDIFutureWidget<BeanT>(
+                      module: AsyncWidgetModule.new,
+                      child: (context) => const MyWidget(),
+                      moduleName: 'AsyncWidgetModule',
+                      loading: const CircularProgressIndicator(),
+                      error: const ErrorWidget(),
+                    ),
+                ],
+            );
+        } 
     }
 ```
 

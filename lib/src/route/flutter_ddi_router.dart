@@ -42,6 +42,11 @@ final class FlutterDDIRouter {
           ...Map.fromEntries(
               m.modules.expand((sub) => _buildModules(sub, path).entries)),
         },
+      (final FlutterDDIFutureModuleRouter m) => {
+          path: (_) => FlutterDDIFutureModuleLoader(module: m),
+          ...Map.fromEntries(
+              m.modules.expand((sub) => _buildModules(sub, path).entries)),
+        },
     };
   }
 }

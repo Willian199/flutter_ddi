@@ -14,6 +14,7 @@ export 'src/modules/flutter_ddi_modules_define.dart';
 export 'src/route/flutter_ddi_cupertino_page_route.dart';
 export 'src/route/flutter_ddi_material_page_route.dart';
 export 'src/route/flutter_ddi_router.dart';
+export 'src/wigets/flutter_ddi_future_module_loader.dart';
 export 'src/wigets/flutter_ddi_future_widget.dart';
 export 'src/wigets/flutter_ddi_module_loader.dart';
 export 'src/wigets/flutter_ddi_widget.dart';
