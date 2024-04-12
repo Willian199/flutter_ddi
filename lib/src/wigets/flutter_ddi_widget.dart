@@ -8,8 +8,12 @@ final class FlutterDDIWidget<BeanT extends Object> extends StatefulWidget {
   /// The `moduleName` parameter is the name of the module.
   /// If `moduleName` is `null`, the module will be registered with the [BeanT].
   /// The `child` parameter is the child widget to be wrapped.
-  const FlutterDDIWidget(
-      {required this.module, required this.child, this.moduleName, super.key});
+  const FlutterDDIWidget({
+    required this.module,
+    required this.child,
+    this.moduleName,
+    super.key,
+  });
 
   /// The child widget to be wrapped.
   final Widget child;

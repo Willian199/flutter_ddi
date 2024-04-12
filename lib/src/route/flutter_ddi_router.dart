@@ -1,5 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_ddi/flutter_ddi.dart';
+import 'package:flutter_ddi/src/wigets/flutter_ddi_future_module_loader.dart';
+import 'package:flutter_ddi/src/wigets/flutter_ddi_module_loader.dart';
 
 /// Class responsible for generating routes from modules.
 /// This class generates routes based on modules for the Flutter app.

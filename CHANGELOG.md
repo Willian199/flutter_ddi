@@ -1,3 +1,8 @@
+## 0.1.0 - Breaking Change
+
+* Removed `ApplicationState`, `DependentState` and `SingletonState`. Should use `FlutterDDIWidget` instead.
+* Removed `FlutterDDICupertinoPageRoute` and `FlutterDDIMaterialPageRoute`, because they are causing memory leaks.
+
 ## 0.0.3
 * Bumped `dart_ddi` to 0.6.2.
 * Fixed exports.

@@ -18,35 +18,6 @@ The `flutter_ddi` offers a range of features that can be easily integrated into 
 
 ## Defining Modules and Routes
 
-### FlutterDDIPage
-The `FlutterDDIPage` class allows defining pages that do not have any dependencies.
-
-Example Usage:
-
-```dart
-class HomePage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Home Page'),
-      ),
-      body: Center(
-        child: Text('Home Page Content'),
-      ),
-    );
-  }
-}
-
-class HomeModule extends FlutterDDIPage {
-  @override
-  WidgetBuilder get page => (_) => const HomePage();
-
-  @override
-  String get path => '/home';
-}
-```
-
 ### FlutterDDIModule
 The `FlutterDDIModule` class is an abstraction that allows defining a module to organize and encapsulate specific dependencies.
 
@@ -155,6 +126,35 @@ class SplashModule extends FlutterDDIFutureModuleRouter {
 }
 ```
 
+### FlutterDDIPage
+The `FlutterDDIPage` class allows defining pages that do not have any dependencies.
+
+Example Usage:
+
+```dart
+class HomePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Home Page'),
+      ),
+      body: Center(
+        child: Text('Home Page Content'),
+      ),
+    );
+  }
+}
+
+class HomeModule extends FlutterDDIPage {
+  @override
+  WidgetBuilder get page => (_) => const HomePage();
+
+  @override
+  String get path => '/home';
+}
+```
+
 ## Using the FlutterDDIRouter
 
 The `FlutterDDIRouter` class is a utility that allows building application routes from the defined modules and pages. With it, you can get a map of routes ready to be used with the Flutter Navigator.
@@ -180,38 +180,6 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-```
-
-## Navigation-related Classes
-
-### FlutterDDICupertinoPageRoute
-The `FlutterDDICupertinoPageRoute` class is an extension of `CupertinoPageRoute` that allows registering a module for the route.
-
-Example Usage:
-
-```dart
-    Navigator.push(
-        context,
-        FlutterDDICupertinoPageRoute(
-            module: () => HomeController(),
-            builder: (_) => const HomePage(),
-        ),
-    );
-```
-
-### FlutterDDIMaterialPageRoute
-The `FlutterDDIMaterialPageRoute` class is an extension of `MaterialPageRoute` that allows registering a module for the route.
-
-Example Usage:
-
-```dart
-    Navigator.push(
-        context,
-        FlutterDDIMaterialPageRoute(
-            module: () => HomeController(),
-            builder: (_) => const HomePage(),
-        ),
-    );
 ```
 
 ## Simplified State Management
@@ -257,26 +225,6 @@ Under the hood, these mixins and classes utilize the `setState` method to update
           return Text('Welcome ${state.name} ${state.surname}');
       }
       
-    }
-```
-
-## Widget Classes
-
-### ApplicationState, DependentState, SingletonState
-These are abstract classes that help manage the lifecycle of a dependency for a widget. The difference between the three classes is the behavior of the instace that will be registered, where the type will be the second parameter passed in the class declaration.
-
-Example Usage:
-
-```dart
-    class HomePage extends StatefulWidget {
-        const HomePage({super.key});
-
-        @override
-        State<HomePage> createState() => _HomePageState(HomePageController.new);
-    }
-
-    class _HomePageState extends ApplicationState<HomePage, HomePageController> {
-        _HomePageState(super.clazzRegister);
     }
 ```
 
