@@ -1,3 +1,7 @@
+## 0.1.1
+
+* Bumpped `dart_ddi` to 0.6.4.
+
 ## 0.1.0 - Breaking Change
 
 * Removed `ApplicationState`, `DependentState` and `SingletonState`. Should use `FlutterDDIWidget` instead.
