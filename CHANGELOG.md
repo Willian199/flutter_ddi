@@ -1,6 +1,6 @@
-## 0.1.1
+## 0.1.2
 
-* Bumpped `dart_ddi` to 0.6.4.
+* Bumpped `dart_ddi` to 0.6.5.
 
 ## 0.1.0 - Breaking Change
 
