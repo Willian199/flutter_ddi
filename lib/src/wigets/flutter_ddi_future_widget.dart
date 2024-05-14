@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dart_ddi/dart_ddi.dart';
 import 'package:flutter/material.dart';
 
@@ -39,6 +41,8 @@ final class FlutterDDIFutureWidget<BeanT extends Object>
 
 class _FlutterDDIFutureWidgetState<BeanT extends Object>
     extends State<FlutterDDIFutureWidget> {
+  final Completer _completer = Completer();
+
   @override
   void initState() {
     /// - Sometimes if you dispose and create the widget so fast, the dispose wasn't called yet.
@@ -51,7 +55,20 @@ class _FlutterDDIFutureWidgetState<BeanT extends Object>
     if (ddi.isRegistered<BeanT>(qualifier: widget.moduleName)) {
       ddi.destroy<BeanT>(qualifier: widget.moduleName);
     }
+    initialize();
     super.initState();
+  }
+
+  Future<void> initialize() async {
+    try {
+      await ddi.registerSingleton<BeanT>(
+        widget.module as BeanT Function(),
+        qualifier: widget.moduleName,
+      );
+      _completer.complete();
+    } catch (e) {
+      _completer.completeError(e);
+    }
   }
 
   @override
@@ -63,9 +80,12 @@ class _FlutterDDIFutureWidgetState<BeanT extends Object>
 
   @override
   Widget build(BuildContext context) {
+    if (_completer.isCompleted) {
+      return widget.child(context);
+    }
+
     return FutureBuilder(
-      future: ddi.registerSingleton<BeanT>(widget.module as BeanT Function(),
-          qualifier: widget.moduleName),
+      future: _completer.future,
       builder: (context, snapshot) {
         return switch ((snapshot.hasError, snapshot.connectionState)) {
           (true, _) => widget.error ?? const SizedBox.shrink(),

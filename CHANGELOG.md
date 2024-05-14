@@ -1,3 +1,8 @@
+## 0.1.3
+
+* Bumpped `dart_ddi` to 0.6.6.
+* Fixed an bad hot reload behavior with `FlutterDDIFutureWidget` and `FlutterDDIFutureModuleRouter`.
+
 ## 0.1.2
 
 * Bumpped `dart_ddi` to 0.6.5.
