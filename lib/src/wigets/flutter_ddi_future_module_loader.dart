@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_ddi/flutter_ddi.dart';
 
@@ -20,6 +22,8 @@ class FlutterDDIFutureModuleLoader extends StatefulWidget {
 
 class _FlutterDDIFutureModuleLoaderState
     extends State<FlutterDDIFutureModuleLoader> {
+  final Completer _completer = Completer();
+
   @override
   void initState() {
     /// - Sometimes if you navigate so fast to the same route, the dispose wasn't called yet.
@@ -32,8 +36,21 @@ class _FlutterDDIFutureModuleLoaderState
     if (ddi.isRegistered(qualifier: widget.module.moduleQualifier)) {
       ddi.destroy(qualifier: widget.module.moduleQualifier);
     }
-
+    initialize();
     super.initState();
+  }
+
+  Future<void> initialize() async {
+    try {
+      await ddi.registerObject(
+        widget.module,
+        qualifier: widget.module.moduleQualifier,
+      );
+
+      _completer.complete();
+    } catch (e) {
+      _completer.completeError(e);
+    }
   }
 
   @override
@@ -47,10 +64,13 @@ class _FlutterDDIFutureModuleLoaderState
 
   @override
   Widget build(BuildContext context) {
+    if (_completer.isCompleted) {
+      return widget.module.page(context);
+    }
+
     return FutureBuilder(
       /// Register the module as a Future
-      future: ddi.registerObject(widget.module,
-          qualifier: widget.module.moduleQualifier),
+      future: _completer.future,
       builder: (context, snapshot) {
         return switch ((snapshot.hasError, snapshot.connectionState)) {
           (true, _) => widget.module.error,
