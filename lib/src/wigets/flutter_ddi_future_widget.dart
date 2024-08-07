@@ -11,13 +11,14 @@ final class FlutterDDIFutureWidget<BeanT extends Object>
   /// The `moduleName` parameter is the name of the module.
   /// If `moduleName` is `null`, the module will be registered with the [BeanT].
   /// The `child` parameter is the child widget to be wrapped.
-  const FlutterDDIFutureWidget(
-      {required this.module,
-      required this.child,
-      this.moduleName,
-      super.key,
-      this.error,
-      this.loading});
+  const FlutterDDIFutureWidget({
+    required this.module,
+    required this.child,
+    this.moduleName,
+    super.key,
+    this.error,
+    this.loading,
+  });
 
   /// The child widget to be wrapped.
   final WidgetBuilder child;
@@ -45,16 +46,6 @@ class _FlutterDDIFutureWidgetState<BeanT extends Object>
 
   @override
   void initState() {
-    /// - Sometimes if you dispose and create the widget so fast, the dispose wasn't called yet.
-    /// So we check if the instance is already registered and if it is, we destroy it.
-    ///
-    /// - If you need to register the instance multiple times, you should use the `moduleName` parameter.
-    /// This is to ensure that the instance is only registered once.
-    ///
-    /// - If you don't provide a `moduleName`, the module will be registered with its default qualifier.
-    if (ddi.isRegistered<BeanT>(qualifier: widget.moduleName)) {
-      ddi.destroy<BeanT>(qualifier: widget.moduleName);
-    }
     initialize();
     super.initState();
   }

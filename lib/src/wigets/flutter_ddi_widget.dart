@@ -32,19 +32,11 @@ class _FlutterDDIWidgetState<BeanT extends Object>
     extends State<FlutterDDIWidget> {
   @override
   void initState() {
-    /// - Sometimes if you dispose and create the widget so fast, the dispose wasn't called yet.
-    /// So we check if the instance is already registered and if it is, we destroy it.
-    ///
-    /// - If you need to register the instance multiple times, you should use the `moduleName` parameter.
-    /// This is to ensure that the instance is only registered once.
-    ///
-    /// - If you don't provide a `moduleName`, the module will be registered with its default qualifier.
-    if (ddi.isRegistered<BeanT>(qualifier: widget.moduleName)) {
-      ddi.destroy<BeanT>(qualifier: widget.moduleName);
-    }
     // Register the module when the widget is initialized
-    ddi.registerSingleton<BeanT>(widget.module as BeanT Function(),
-        qualifier: widget.moduleName);
+    ddi.registerSingleton<BeanT>(
+      widget.module as BeanT Function(),
+      qualifier: widget.moduleName,
+    );
     super.initState();
   }
 
