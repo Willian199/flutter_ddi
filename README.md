@@ -217,7 +217,7 @@ Under the hood, these mixins and classes utilize the `setState` method to update
         State<HomePage> createState() => _HomePageState();
     }
 
-    /// Using can use the mixin `StreamListener` or `EventListener`
+    /// You can use the mixin `StreamListener` or `EventListener`
     class _HomePageState extends State<HomePage> with StreamListener<HomePage, HomePageModel> {
     // class _HomePageState extends State<HomePage> with EventListener<HomePage, HomePageModel> {
 
