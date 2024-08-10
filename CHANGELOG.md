@@ -1,3 +1,7 @@
+## 0.2.0
+* Bumpped `dart_ddi` to 0.7.0.
+* Support for `registerComponent` and `getComponent`. Making Flutter Widgets components easier to reuse.
+
 ## 0.1.3
 
 * Bumpped `dart_ddi` to 0.6.6.

@@ -3,7 +3,7 @@ description: "A Flutter package for easy and clean dependency injection manageme
 version: 0.2.0
 homepage: https://github.com/Willian199/flutter_ddi
 issue_tracker: https://github.com/Willian199/flutter_ddi/issues
-publish_to: none
+
 tags:
   - dependency
   - package
@@ -21,8 +21,8 @@ topics:
   - routes
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
-  flutter: ">=3.10.0"
+  sdk: '>=3.4.0 <4.0.0'
+  flutter: ">=3.22.0"
 
 dependencies:
   flutter:
