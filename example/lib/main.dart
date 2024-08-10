@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_ddi/flutter_ddi.dart';
 
 void main() {
-  ddi.setDebugMode(false);
   runApp(const MyApp());
 }
 
