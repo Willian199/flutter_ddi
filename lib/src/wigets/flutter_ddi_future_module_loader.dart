@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_ddi/flutter_ddi.dart';
+import 'package:flutter_ddi/src/wigets/flutter_ddi_custom_pop_scope.dart';
 
 /// Widget that loads a module with dependency injection.
 /// This widget is used to load a module's page with its dependencies resolved.
@@ -22,7 +23,7 @@ class FlutterDDIFutureModuleLoader extends StatefulWidget {
 
 class _FlutterDDIFutureModuleLoaderState
     extends State<FlutterDDIFutureModuleLoader> {
-  final Completer _completer = Completer();
+  late final Completer _completer = Completer();
 
   @override
   void initState() {
@@ -33,10 +34,11 @@ class _FlutterDDIFutureModuleLoaderState
     /// This is to ensure that the module is only registered once.
     ///
     /// - If you don't provide a `moduleQualifier`, the module will be registered with its default qualifier.
-    if (ddi.isRegistered(qualifier: widget.module.moduleQualifier)) {
-      ddi.destroy(qualifier: widget.module.moduleQualifier);
-    }
+    // if (ddi.isRegistered(qualifier: widget.module.moduleQualifier)) {
+    //   ddi.refreshObject(widget.module, qualifier: widget.module.moduleQualifier);
+    // } else {
     initialize();
+    // }
     super.initState();
   }
 
@@ -65,19 +67,25 @@ class _FlutterDDIFutureModuleLoaderState
   @override
   Widget build(BuildContext context) {
     if (_completer.isCompleted) {
-      return widget.module.page(context);
+      return CustomPopScope(
+        moduleQualifier: widget.module.moduleQualifier,
+        child: widget.module.page(context),
+      );
     }
 
-    return FutureBuilder(
-      /// Register the module as a Future
-      future: _completer.future,
-      builder: (context, snapshot) {
-        return switch ((snapshot.hasError, snapshot.connectionState)) {
-          (true, _) => widget.module.error,
-          (false, ConnectionState.done) => widget.module.page(context),
-          _ => widget.module.loading,
-        };
-      },
+    return CustomPopScope(
+      moduleQualifier: widget.module.moduleQualifier,
+      child: FutureBuilder(
+        /// Register the module as a Future
+        future: _completer.future,
+        builder: (context, snapshot) {
+          return switch ((snapshot.hasError, snapshot.connectionState)) {
+            (true, _) => widget.module.error,
+            (false, ConnectionState.done) => widget.module.page(context),
+            _ => widget.module.loading,
+          };
+        },
+      ),
     );
   }
 }

@@ -9,8 +9,7 @@ import 'package:flutter_ddi/src/wigets/flutter_ddi_module_loader.dart';
 final class FlutterDDIRouter {
   /// Get routes from a list of modules.
   /// This method creates routes based on the provided list of modules.
-  /// @param [List<FlutterDDIModuleDefine>] The list of modules to generate routes from.
-  /// @return [Map<String, WidgetBuilder>] The generated routes.
+  /// `modules` The list of modules to generate routes from.
   ///
   static Map<String, WidgetBuilder> getRoutes(
       {required List<FlutterDDIModuleDefine> modules}) {

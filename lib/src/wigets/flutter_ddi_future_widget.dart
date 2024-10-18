@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:dart_ddi/dart_ddi.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_ddi/src/wigets/flutter_ddi_custom_pop_scope.dart';
 
 /// Widget that handles dependency injection.
 /// This widget is used to wrap a child widget and register its module with DDI.
@@ -52,39 +53,53 @@ class _FlutterDDIFutureWidgetState<BeanT extends Object>
 
   Future<void> initialize() async {
     try {
-      await ddi.registerSingleton<BeanT>(
-        widget.module as BeanT Function(),
-        qualifier: widget.moduleName,
-      );
+      await ddi.registerSingleton<BeanT>(widget.module as BeanT Function(),
+          qualifier: widget.moduleName);
+
       _completer.complete();
     } catch (e) {
       _completer.completeError(e);
+      rethrow;
     }
   }
 
   @override
   void dispose() {
     // Destroy the registered module when the widget is disposed
+
     ddi.destroy<BeanT>(qualifier: widget.moduleName);
+
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     if (_completer.isCompleted) {
-      return widget.child(context);
+      return CustomPopScope(
+        moduleQualifier: widget.moduleName ?? BeanT,
+        child: widget.child(context),
+      );
     }
 
-    return FutureBuilder(
-      future: _completer.future,
-      builder: (context, snapshot) {
-        return switch ((snapshot.hasError, snapshot.connectionState)) {
-          (true, _) => widget.error ?? const SizedBox.shrink(),
-          (false, ConnectionState.done) => widget.child(context),
-          _ =>
-            widget.loading ?? const Center(child: CircularProgressIndicator()),
-        };
-      },
+    return CustomPopScope(
+      moduleQualifier: widget.moduleName ?? BeanT,
+      child: FutureBuilder(
+        future: _completer.future,
+        builder: (context, snapshot) {
+          return switch ((snapshot.hasError, snapshot.connectionState)) {
+            (true, _) => widget.error ??
+                Scaffold(
+                  backgroundColor: Colors.red,
+                  body: Center(
+                    child: Text(snapshot.error.toString()),
+                  ),
+                ),
+            (false, ConnectionState.done) => widget.child(context),
+            _ => widget.loading ??
+                const Center(child: CircularProgressIndicator()),
+          };
+        },
+      ),
     );
   }
 }

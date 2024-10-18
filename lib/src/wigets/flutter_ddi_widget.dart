@@ -1,5 +1,6 @@
 import 'package:dart_ddi/dart_ddi.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_ddi/src/wigets/flutter_ddi_custom_pop_scope.dart';
 
 /// Widget that handles dependency injection.
 /// This widget is used to wrap a child widget and register its module with DDI.
@@ -49,6 +50,9 @@ class _FlutterDDIWidgetState<BeanT extends Object>
 
   @override
   Widget build(BuildContext context) {
-    return widget.child;
+    return CustomPopScope(
+      moduleQualifier: widget.moduleName ?? BeanT,
+      child: widget.child,
+    );
   }
 }
