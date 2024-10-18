@@ -1,4 +1,5 @@
 import 'package:dart_ddi/dart_ddi.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ddi/src/wigets/flutter_ddi_custom_pop_scope.dart';
 
@@ -27,17 +28,41 @@ final class FlutterDDIWidget<BeanT extends Object> extends StatefulWidget {
 
   @override
   State<FlutterDDIWidget> createState() => _FlutterDDIWidgetState<BeanT>();
+
+  @override
+  StatefulElement createElement() =>
+      _StatefulElement<FlutterDDIWidget<BeanT>, BeanT>(this, moduleName);
+}
+
+class _StatefulElement<WidgetT extends StatefulWidget, BeanT extends Object>
+    extends StatefulElement {
+  _StatefulElement(WidgetT super.widget, this.moduleName);
+
+  /// The name of the module.
+  final String? moduleName;
+
+  @override
+  void unmount() {
+    ddi.destroy<BeanT>(qualifier: moduleName);
+    super.unmount();
+  }
 }
 
 class _FlutterDDIWidgetState<BeanT extends Object>
     extends State<FlutterDDIWidget> {
   @override
   void initState() {
-    // Register the module when the widget is initialized
-    ddi.registerSingleton<BeanT>(
-      widget.module as BeanT Function(),
-      qualifier: widget.moduleName,
-    );
+    if (!kReleaseMode && !kProfileMode) {
+      ddi.destroy<BeanT>(qualifier: widget.moduleName);
+    }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ddi.registerSingleton<BeanT>(
+        widget.module as BeanT Function(),
+        qualifier: widget.moduleName,
+      );
+    });
+
     super.initState();
   }
 

@@ -289,6 +289,9 @@ Example Usage:
     }
 ```
 
+# Known Issues
+
+`Circular Routes:` At present, the package does not fully support circular route structures. Defining circular dependencies between routes will lead to errors during the module registration process.
 
 
 Any help, suggestions, corrections are welcome.

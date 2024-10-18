@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:dart_ddi/dart_ddi.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ddi/src/wigets/flutter_ddi_custom_pop_scope.dart';
 
@@ -37,28 +38,54 @@ final class FlutterDDIFutureWidget<BeanT extends Object>
   final String? moduleName;
 
   @override
+  StatefulElement createElement() =>
+      _StatefulElement<FlutterDDIFutureWidget<BeanT>, BeanT>(this, moduleName);
+
+  @override
   State<FlutterDDIFutureWidget> createState() =>
       _FlutterDDIFutureWidgetState<BeanT>();
 }
 
+class _StatefulElement<WidgetT extends StatefulWidget, BeanT extends Object>
+    extends StatefulElement {
+  _StatefulElement(WidgetT super.widget, this.moduleName);
+
+  /// The name of the module.
+  final String? moduleName;
+
+  @override
+  void unmount() {
+    ddi.destroy<BeanT>(qualifier: moduleName);
+    super.unmount();
+  }
+}
+
 class _FlutterDDIFutureWidgetState<BeanT extends Object>
     extends State<FlutterDDIFutureWidget> {
-  final Completer _completer = Completer();
+  _FlutterDDIFutureWidgetState();
+  final Completer completer = Completer();
 
   @override
   void initState() {
-    initialize();
+    if (!kReleaseMode && !kProfileMode) {
+      ddi.destroy<BeanT>(qualifier: widget.moduleName);
+    }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => initialize());
+
     super.initState();
   }
 
   Future<void> initialize() async {
     try {
-      await ddi.registerSingleton<BeanT>(widget.module as BeanT Function(),
-          qualifier: widget.moduleName);
+      await ddi.registerSingleton<BeanT>(
+        widget.module as BeanT Function(),
+        qualifier: widget.moduleName,
+      );
 
-      _completer.complete();
+      completer.complete();
     } catch (e) {
-      _completer.completeError(e);
+      completer.completeError(e);
       rethrow;
     }
   }
@@ -74,7 +101,7 @@ class _FlutterDDIFutureWidgetState<BeanT extends Object>
 
   @override
   Widget build(BuildContext context) {
-    if (_completer.isCompleted) {
+    if (completer.isCompleted) {
       return CustomPopScope(
         moduleQualifier: widget.moduleName ?? BeanT,
         child: widget.child(context),
@@ -84,7 +111,7 @@ class _FlutterDDIFutureWidgetState<BeanT extends Object>
     return CustomPopScope(
       moduleQualifier: widget.moduleName ?? BeanT,
       child: FutureBuilder(
-        future: _completer.future,
+        future: completer.future,
         builder: (context, snapshot) {
           return switch ((snapshot.hasError, snapshot.connectionState)) {
             (true, _) => widget.error ??

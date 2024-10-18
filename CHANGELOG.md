@@ -1,3 +1,7 @@
+## 0.3.0
+* Bumpped `dart_ddi` to 0.8.0.
+* Fixes router modules creation aand disposal process.
+
 ## 0.2.0
 * Bumpped `dart_ddi` to 0.7.0.
 * Support for `registerComponent` and `getComponent`. Making Flutter Widgets components easier to reuse.
