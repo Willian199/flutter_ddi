@@ -37,7 +37,11 @@ class _FlutterDDIModuleLoaderState extends State<FlutterDDIModuleLoader> {
     //   ddi.refreshObject(widget.module, qualifier: widget.module.moduleQualifier);
     // } else {
     //   /// Register the module with its qualifier when the widget is initialized
-    ddi.registerObject(widget.module, qualifier: widget.module.moduleQualifier);
+    ddi.registerObject(
+      widget.module,
+      qualifier: widget.module.moduleQualifier,
+    );
+
     // }
 
     super.initState();

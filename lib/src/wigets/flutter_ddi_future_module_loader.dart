@@ -17,12 +17,10 @@ class FlutterDDIFutureModuleLoader extends StatefulWidget {
   final FlutterDDIFutureModuleRouter module;
 
   @override
-  State<FlutterDDIFutureModuleLoader> createState() =>
-      _FlutterDDIFutureModuleLoaderState();
+  State<FlutterDDIFutureModuleLoader> createState() => _FlutterDDIFutureModuleLoaderState();
 }
 
-class _FlutterDDIFutureModuleLoaderState
-    extends State<FlutterDDIFutureModuleLoader> {
+class _FlutterDDIFutureModuleLoaderState extends State<FlutterDDIFutureModuleLoader> {
   late final Completer _completer = Completer();
 
   @override
@@ -37,7 +35,8 @@ class _FlutterDDIFutureModuleLoaderState
     // if (ddi.isRegistered(qualifier: widget.module.moduleQualifier)) {
     //   ddi.refreshObject(widget.module, qualifier: widget.module.moduleQualifier);
     // } else {
-    initialize();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => initialize());
     // }
     super.initState();
   }
@@ -80,9 +79,20 @@ class _FlutterDDIFutureModuleLoaderState
         future: _completer.future,
         builder: (context, snapshot) {
           return switch ((snapshot.hasError, snapshot.connectionState)) {
-            (true, _) => widget.module.error,
+            (true, _) => widget.module.error ??
+                ddi.getOptionalWith<ErrorModuleInterface, AsyncSnapshot>(parameter: snapshot) ??
+                Scaffold(
+                  backgroundColor: Colors.red,
+                  body: Center(
+                    child: Text(snapshot.error.toString()),
+                  ),
+                ),
             (false, ConnectionState.done) => widget.module.page(context),
-            _ => widget.module.loading,
+            _ => widget.module.loading ??
+                ddi.getOptional<LoaderModuleInterface>() ??
+                const Center(
+                  child: CircularProgressIndicator(),
+                ),
           };
         },
       ),

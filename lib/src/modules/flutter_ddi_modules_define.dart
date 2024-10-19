@@ -20,8 +20,7 @@ abstract class FlutterDDIModule extends FlutterDDIModuleDefine with DDIModule {
 /// This class should be extended to define a page with dependency injection.
 abstract class FlutterDDIPage extends FlutterDDIModuleDefine {
   /// Factory method to create a FlutterDDIPage.
-  factory FlutterDDIPage.from(
-      {required String path, required WidgetBuilder page}) {
+  factory FlutterDDIPage.from({required String path, required WidgetBuilder page}) {
     return _FactoryFlutterDDIPage(path, page);
   }
 
@@ -59,8 +58,7 @@ abstract class FlutterDDIModuleRouter extends FlutterDDIModuleDefine {
   List<FlutterDDIModuleDefine> get modules;
 }
 
-abstract class FlutterDDIFutureModuleRouter extends FlutterDDIModuleDefine
-    with DDIModule {
+abstract class FlutterDDIFutureModuleRouter extends FlutterDDIModuleDefine with DDIModule {
   /// Get the page associated with the module.
   WidgetBuilder get page;
 
@@ -68,8 +66,8 @@ abstract class FlutterDDIFutureModuleRouter extends FlutterDDIModuleDefine
   List<FlutterDDIModuleDefine> get modules => [];
 
   /// The error widget to be displayed if the module fails to be registered.
-  Widget get error => const SizedBox.shrink();
+  Widget? get error;
 
   /// The loading widget to be displayed while the module is being registered.
-  Widget get loading => const Center(child: CircularProgressIndicator());
+  Widget? get loading;
 }

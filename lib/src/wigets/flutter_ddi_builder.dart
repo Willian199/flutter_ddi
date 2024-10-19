@@ -1,19 +1,19 @@
 import 'dart:async';
 
 import 'package:dart_ddi/dart_ddi.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_ddi/src/interfaces/error_module_interface.dart';
+import 'package:flutter_ddi/src/interfaces/loader_module_interface.dart';
 import 'package:flutter_ddi/src/wigets/flutter_ddi_custom_pop_scope.dart';
 
 /// Widget that handles dependency injection.
 /// This widget is used to wrap a child widget and register its module with DDI.
-final class FlutterDDIFutureWidget<BeanT extends Object>
-    extends StatefulWidget {
+final class FlutterDDIBuilder<BeanT extends Object> extends StatefulWidget {
   /// The `module` parameter is a function returning an instance of the widget's module.
   /// The `moduleName` parameter is the name of the module.
   /// If `moduleName` is `null`, the module will be registered with the [BeanT].
   /// The `child` parameter is the child widget to be wrapped.
-  const FlutterDDIFutureWidget({
+  const FlutterDDIBuilder({
     required this.module,
     required this.child,
     this.moduleName,
@@ -38,16 +38,13 @@ final class FlutterDDIFutureWidget<BeanT extends Object>
   final String? moduleName;
 
   @override
-  StatefulElement createElement() =>
-      _StatefulElement<FlutterDDIFutureWidget<BeanT>, BeanT>(this, moduleName);
+  StatefulElement createElement() => _StatefulElement<FlutterDDIBuilder<BeanT>, BeanT>(this, moduleName);
 
   @override
-  State<FlutterDDIFutureWidget> createState() =>
-      _FlutterDDIFutureWidgetState<BeanT>();
+  State<FlutterDDIBuilder> createState() => _FlutterDDIBuilderState<BeanT>();
 }
 
-class _StatefulElement<WidgetT extends StatefulWidget, BeanT extends Object>
-    extends StatefulElement {
+class _StatefulElement<WidgetT extends StatefulWidget, BeanT extends Object> extends StatefulElement {
   _StatefulElement(WidgetT super.widget, this.moduleName);
 
   /// The name of the module.
@@ -60,17 +57,12 @@ class _StatefulElement<WidgetT extends StatefulWidget, BeanT extends Object>
   }
 }
 
-class _FlutterDDIFutureWidgetState<BeanT extends Object>
-    extends State<FlutterDDIFutureWidget> {
-  _FlutterDDIFutureWidgetState();
+class _FlutterDDIBuilderState<BeanT extends Object> extends State<FlutterDDIBuilder> {
+  _FlutterDDIBuilderState();
   final Completer completer = Completer();
 
   @override
   void initState() {
-    if (!kReleaseMode && !kProfileMode) {
-      ddi.destroy<BeanT>(qualifier: widget.moduleName);
-    }
-
     WidgetsBinding.instance.addPostFrameCallback((_) => initialize());
 
     super.initState();
@@ -112,9 +104,10 @@ class _FlutterDDIFutureWidgetState<BeanT extends Object>
       moduleQualifier: widget.moduleName ?? BeanT,
       child: FutureBuilder(
         future: completer.future,
-        builder: (context, snapshot) {
+        builder: (context, AsyncSnapshot snapshot) {
           return switch ((snapshot.hasError, snapshot.connectionState)) {
             (true, _) => widget.error ??
+                ddi.getOptionalWith<ErrorModuleInterface, AsyncSnapshot>(parameter: snapshot) ??
                 Scaffold(
                   backgroundColor: Colors.red,
                   body: Center(
@@ -123,7 +116,10 @@ class _FlutterDDIFutureWidgetState<BeanT extends Object>
                 ),
             (false, ConnectionState.done) => widget.child(context),
             _ => widget.loading ??
-                const Center(child: CircularProgressIndicator()),
+                ddi.getOptional<LoaderModuleInterface>() ??
+                const Center(
+                  child: CircularProgressIndicator(),
+                ),
           };
         },
       ),
