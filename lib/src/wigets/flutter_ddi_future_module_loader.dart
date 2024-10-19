@@ -17,10 +17,12 @@ class FlutterDDIFutureModuleLoader extends StatefulWidget {
   final FlutterDDIFutureModuleRouter module;
 
   @override
-  State<FlutterDDIFutureModuleLoader> createState() => _FlutterDDIFutureModuleLoaderState();
+  State<FlutterDDIFutureModuleLoader> createState() =>
+      _FlutterDDIFutureModuleLoaderState();
 }
 
-class _FlutterDDIFutureModuleLoaderState extends State<FlutterDDIFutureModuleLoader> {
+class _FlutterDDIFutureModuleLoaderState
+    extends State<FlutterDDIFutureModuleLoader> {
   late final Completer _completer = Completer();
   bool isDestroyed = false;
   @override
@@ -88,7 +90,8 @@ class _FlutterDDIFutureModuleLoaderState extends State<FlutterDDIFutureModuleLoa
         builder: (context, snapshot) {
           return switch ((snapshot.hasError, snapshot.connectionState)) {
             (true, _) => widget.module.error ??
-                ddi.getOptionalWith<ErrorModuleInterface, AsyncSnapshot>(parameter: snapshot) ??
+                ddi.getOptionalWith<ErrorModuleInterface, AsyncSnapshot>(
+                    parameter: snapshot) ??
                 Scaffold(
                   backgroundColor: Colors.red,
                   body: Center(

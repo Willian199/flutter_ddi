@@ -41,7 +41,8 @@ final class FlutterDDIBuilder<BeanT extends Object> extends StatefulWidget {
   State<FlutterDDIBuilder> createState() => _FlutterDDIBuilderState<BeanT>();
 }
 
-class _FlutterDDIBuilderState<BeanT extends Object> extends State<FlutterDDIBuilder> {
+class _FlutterDDIBuilderState<BeanT extends Object>
+    extends State<FlutterDDIBuilder> {
   _FlutterDDIBuilderState();
   final Completer completer = Completer();
 
@@ -100,7 +101,8 @@ class _FlutterDDIBuilderState<BeanT extends Object> extends State<FlutterDDIBuil
         builder: (context, AsyncSnapshot snapshot) {
           return switch ((snapshot.hasError, snapshot.connectionState)) {
             (true, _) => widget.error ??
-                ddi.getOptionalWith<ErrorModuleInterface, AsyncSnapshot>(parameter: snapshot) ??
+                ddi.getOptionalWith<ErrorModuleInterface, AsyncSnapshot>(
+                    parameter: snapshot) ??
                 Scaffold(
                   backgroundColor: Colors.red,
                   body: Center(
