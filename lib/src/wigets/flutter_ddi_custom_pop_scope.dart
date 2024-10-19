@@ -15,10 +15,11 @@ class CustomPopScope extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      onPopInvoked: (pop) async {
-        final navigator = Navigator.of(context);
+      onPopInvokedWithResult: (pop, a) async {
+        //final navigator = Navigator.of(context);
         bool isDestroyed = false;
-        if (pop && navigator.canPop()) {
+        //Naviagotor.canPop() seems to be broken. It returns false, even if there is a route to pop .
+        if (pop /*&& navigator.canPop()*/) {
           await ddi.destroy(qualifier: moduleQualifier);
           isDestroyed = true;
         }

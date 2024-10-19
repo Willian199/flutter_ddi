@@ -1,3 +1,7 @@
+## 0.4.0
+* Flutter constraint increased to >=3.24.0.
+* Fixed destroy modules, where using Flutter >=3.24.0. Navigator.canPop seems to be broken.
+
 ## 0.3.0
 * Bumpped `dart_ddi` to 0.8.0.
 * Fixes router modules creation and disposal process.
