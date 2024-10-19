@@ -1,6 +1,10 @@
 ## 0.3.0
 * Bumpped `dart_ddi` to 0.8.0.
-* Fixes router modules creation aand disposal process.
+* Fixes router modules creation and disposal process.
+
+** Breaking Changes **
+* Removed `FlutterDDIWidget`. Use `FlutterDDIBuilder` instead.
+* Renamed `FlutterDDIFutureWidget` to `FlutterDDIBuilder`.
 
 ## 0.2.0
 * Bumpped `dart_ddi` to 0.7.0.

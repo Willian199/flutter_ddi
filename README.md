@@ -235,9 +235,9 @@ Under the hood, these mixins and classes utilize the `setState` method to update
     }
 ```
 
-### FlutterDDIWidget e FlutterDDIFutureWidget
+### FlutterDDIBuilder
 
-These two widgets handle dependency injection seamlessly. The `FlutterDDIWidget` handles dependency injection by wrapping a child widget and registering its module. Similarly, the `FlutterDDIFutureWidget` handles dependency injection by wrapping a future builder and registering its module asynchronously.
+The Widget `FlutterDDIBuilder` handles dependency injection by wrapping a builder and registering its module asynchronously.
 
 Example Usage:
 
@@ -249,12 +249,7 @@ Example Usage:
         Widget build(BuildContext context) {
             return Column(
                 children: [
-                    FlutterDDIWidget<BeanT>(
-                      module: WidgetModule.new,
-                      child: const MyWidget(),
-                      moduleName: 'WidgetModule',
-                    ),
-                    FlutterDDIFutureWidget<BeanT>(
+                    FlutterDDIBuilder<BeanT>(
                       module: AsyncWidgetModule.new,
                       child: (context) => const MyWidget(),
                       moduleName: 'AsyncWidgetModule',
@@ -289,7 +284,7 @@ Example Usage:
     }
 ```
 
-# Known Issues
+# Known Limitation
 
 `Circular Routes:` At present, the package does not fully support circular route structures. Defining circular dependencies between routes will lead to errors during the module registration process.
 
