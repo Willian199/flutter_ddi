@@ -194,7 +194,7 @@ class MyApp extends StatelessWidget {
 Managing state in Flutter applications, especially for medium or smaller projects, doesn't always require complex state management solutions. For apps where simplicity and efficiency are key, using these mixins and classes for state management can be a straightforward and effective approach. But for larger and complex projects, it's recommended to use a proper state management solutions.
 
 ### How It Works
-Under the hood, these mixins and classes utilize the `setState` method to update the widget's state. They handle registering an event or stream in the `initState` and cleaning up in the `dispose` method.
+Under the hood, these mixins utilize the `setState` method to update the widget's state. They handle registering an event or stream in the `initState` and cleaning up in the `dispose` method.
 
 #### Example Usage:
 
@@ -206,32 +206,33 @@ Under the hood, these mixins and classes utilize the `setState` method to update
         State<HomePage> createState() => _HomePageState();
     }
 
-    /// You can extend `StreamListenerState` or `EventListenerState`
+    /// You can extend `StreamListenerState` or `EventListenerState` or use the mixin `StreamListener` or `EventListener`
     class _HomePageState extends StreamListenerState<HomePage, HomePageModel> {
     // class _HomePageState extends EventListenerState<HomePage, HomePageModel> {
+    // class _HomePageState extends State<HomePage> with StreamListener<HomePage, HomePageModel> {
+    // class _HomePageState extends State<HomePage> with EventListener<HomePage, HomePageModel> {
 
       Widget build(BuildContext context) {
           return Text('Welcome ${state.name} ${state.surname}');
       } 
     }
-```
 
-```dart
-    class HomePage extends StatefulWidget {
-        const HomePage({super.key});
+    class HomePageModel {
+      final String name;
+      final String surname;
 
-        @override
-        State<HomePage> createState() => _HomePageState();
+      HomePageModel(this.name, this.surname);
     }
 
-    /// You can use the mixin `StreamListener` or `EventListener`
-    class _HomePageState extends State<HomePage> with StreamListener<HomePage, HomePageModel> {
-    // class _HomePageState extends State<HomePage> with EventListener<HomePage, HomePageModel> {
+    class HomePageControler with DDIEventSender<HomePageModel> {
+    //class HomePageControler with DDIStreamSender<HomePageModel>{
 
-      Widget build(BuildContext context) {
-          return Text('Welcome ${state.name} ${state.surname}');
+      String name = 'John'; 
+      String surname = 'Wick';
+
+      void update() {
+        fire(HomePageModel(name, surname));
       }
-      
     }
 ```
 
