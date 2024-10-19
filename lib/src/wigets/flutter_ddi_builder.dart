@@ -38,28 +38,14 @@ final class FlutterDDIBuilder<BeanT extends Object> extends StatefulWidget {
   final String? moduleName;
 
   @override
-  StatefulElement createElement() => _StatefulElement<FlutterDDIBuilder<BeanT>, BeanT>(this, moduleName);
-
-  @override
   State<FlutterDDIBuilder> createState() => _FlutterDDIBuilderState<BeanT>();
-}
-
-class _StatefulElement<WidgetT extends StatefulWidget, BeanT extends Object> extends StatefulElement {
-  _StatefulElement(WidgetT super.widget, this.moduleName);
-
-  /// The name of the module.
-  final String? moduleName;
-
-  @override
-  void unmount() {
-    ddi.destroy<BeanT>(qualifier: moduleName);
-    super.unmount();
-  }
 }
 
 class _FlutterDDIBuilderState<BeanT extends Object> extends State<FlutterDDIBuilder> {
   _FlutterDDIBuilderState();
   final Completer completer = Completer();
+
+  bool isDestroyed = false;
 
   @override
   void initState() {
@@ -85,10 +71,15 @@ class _FlutterDDIBuilderState<BeanT extends Object> extends State<FlutterDDIBuil
   @override
   void dispose() {
     // Destroy the registered module when the widget is disposed
-
-    ddi.destroy<BeanT>(qualifier: widget.moduleName);
+    if (!isDestroyed) {
+      ddi.destroy<BeanT>(qualifier: widget.moduleName);
+    }
 
     super.dispose();
+  }
+
+  void onPop(bool isDestroyed) {
+    this.isDestroyed = isDestroyed;
   }
 
   @override
@@ -97,10 +88,12 @@ class _FlutterDDIBuilderState<BeanT extends Object> extends State<FlutterDDIBuil
       return CustomPopScope(
         moduleQualifier: widget.moduleName ?? BeanT,
         child: widget.child(context),
+        onPopInvoked: onPop,
       );
     }
 
     return CustomPopScope(
+      onPopInvoked: onPop,
       moduleQualifier: widget.moduleName ?? BeanT,
       child: FutureBuilder(
         future: completer.future,

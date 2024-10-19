@@ -22,7 +22,7 @@ class FlutterDDIFutureModuleLoader extends StatefulWidget {
 
 class _FlutterDDIFutureModuleLoaderState extends State<FlutterDDIFutureModuleLoader> {
   late final Completer _completer = Completer();
-
+  bool isDestroyed = false;
   @override
   void initState() {
     /// - Sometimes if you navigate so fast to the same route, the dispose wasn't called yet.
@@ -58,9 +58,15 @@ class _FlutterDDIFutureModuleLoaderState extends State<FlutterDDIFutureModuleLoa
   void dispose() {
     // Destroy the registered module when the widget is disposed
     // If you don't provide a `moduleQualifier`, the module will be destroyed with its default qualifier
-    ddi.destroy(qualifier: widget.module.moduleQualifier);
+    if (!isDestroyed) {
+      ddi.destroy(qualifier: widget.module.moduleQualifier);
+    }
 
     super.dispose();
+  }
+
+  void onPop(bool isDestroyed) {
+    this.isDestroyed = isDestroyed;
   }
 
   @override
@@ -69,10 +75,12 @@ class _FlutterDDIFutureModuleLoaderState extends State<FlutterDDIFutureModuleLoa
       return CustomPopScope(
         moduleQualifier: widget.module.moduleQualifier,
         child: widget.module.page(context),
+        onPopInvoked: onPop,
       );
     }
 
     return CustomPopScope(
+      onPopInvoked: onPop,
       moduleQualifier: widget.module.moduleQualifier,
       child: FutureBuilder(
         /// Register the module as a Future
