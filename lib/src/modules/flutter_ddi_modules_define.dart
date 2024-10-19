@@ -68,8 +68,8 @@ abstract class FlutterDDIFutureModuleRouter extends FlutterDDIModuleDefine
   List<FlutterDDIModuleDefine> get modules => [];
 
   /// The error widget to be displayed if the module fails to be registered.
-  Widget get error => const SizedBox.shrink();
+  Widget? get error;
 
   /// The loading widget to be displayed while the module is being registered.
-  Widget get loading => const Center(child: CircularProgressIndicator());
+  Widget? get loading;
 }

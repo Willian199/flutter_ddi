@@ -1,5 +1,6 @@
 import 'package:dart_ddi/dart_ddi.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_ddi/src/wigets/flutter_ddi_custom_pop_scope.dart';
 
 /// Widget that loads a module with dependency injection.
 /// This widget is used to load a module's page with its dependencies resolved.
@@ -23,6 +24,7 @@ class FlutterDDIModuleLoader extends StatefulWidget {
 }
 
 class _FlutterDDIModuleLoaderState extends State<FlutterDDIModuleLoader> {
+  bool isDestroyed = false;
   @override
   void initState() {
     /// - Sometimes if you navigate so fast to the same route, the dispose wasn't called yet.
@@ -32,12 +34,16 @@ class _FlutterDDIModuleLoaderState extends State<FlutterDDIModuleLoader> {
     /// This is to ensure that the module is only registered once.
     ///
     /// - If you don't provide a `moduleQualifier`, the module will be registered with its default qualifier.
-    if (ddi.isRegistered(qualifier: widget.module.moduleQualifier)) {
-      ddi.destroy(qualifier: widget.module.moduleQualifier);
-    }
+    // if (ddi.isRegistered(qualifier: widget.module.moduleQualifier)) {
+    //   ddi.refreshObject(widget.module, qualifier: widget.module.moduleQualifier);
+    // } else {
+    //   /// Register the module with its qualifier when the widget is initialized
+    ddi.registerObject(
+      widget.module,
+      qualifier: widget.module.moduleQualifier,
+    );
 
-    /// Register the module with its qualifier when the widget is initialized
-    ddi.registerObject(widget.module, qualifier: widget.module.moduleQualifier);
+    // }
 
     super.initState();
   }
@@ -46,13 +52,23 @@ class _FlutterDDIModuleLoaderState extends State<FlutterDDIModuleLoader> {
   void dispose() {
     // Destroy the registered module when the widget is disposed
     // If you don't provide a `moduleQualifier`, the module will be destroyed with its default qualifier
-    ddi.destroy(qualifier: widget.module.moduleQualifier);
+    if (!isDestroyed) {
+      ddi.destroy(qualifier: widget.module.moduleQualifier);
+    }
 
     super.dispose();
   }
 
+  void onPop(bool isDestroyed) {
+    this.isDestroyed = isDestroyed;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return widget.page(context);
+    return CustomPopScope(
+      moduleQualifier: widget.module.moduleQualifier,
+      child: widget.page(context),
+      onPopInvoked: onPop,
+    );
   }
 }
