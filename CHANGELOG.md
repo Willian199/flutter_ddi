@@ -1,3 +1,6 @@
+## 0.5.1
+* Fixed issue with `FlutterDDIBuilder` and `FlutterDDIFutureModuleRouter`, was causing tree's change and losing the context.
+
 ## 0.5.0
 * Bumpped `dart_ddi` to 0.9.0.
 

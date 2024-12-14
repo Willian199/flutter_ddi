@@ -25,21 +25,11 @@ class _FlutterDDIFutureModuleLoaderState
     extends State<FlutterDDIFutureModuleLoader> {
   late final Completer _completer = Completer();
   bool isDestroyed = false;
+  Widget? _cachedWidget;
+
   @override
   void initState() {
-    /// - Sometimes if you navigate so fast to the same route, the dispose wasn't called yet.
-    /// So we check if the module is already registered and if it is, we destroy it.
-    ///
-    /// - If you need to register the module multiple times, you should use the `moduleQualifier` parameter.
-    /// This is to ensure that the module is only registered once.
-    ///
-    /// - If you don't provide a `moduleQualifier`, the module will be registered with its default qualifier.
-    // if (ddi.isRegistered(qualifier: widget.module.moduleQualifier)) {
-    //   ddi.refreshObject(widget.module, qualifier: widget.module.moduleQualifier);
-    // } else {
-
     WidgetsBinding.instance.addPostFrameCallback((_) => initialize());
-    // }
     super.initState();
   }
 
@@ -64,6 +54,7 @@ class _FlutterDDIFutureModuleLoaderState
       ddi.destroy(qualifier: widget.module.moduleQualifier);
     }
 
+    _cachedWidget = null;
     super.dispose();
   }
 
@@ -73,19 +64,11 @@ class _FlutterDDIFutureModuleLoaderState
 
   @override
   Widget build(BuildContext context) {
-    if (_completer.isCompleted) {
-      return CustomPopScope(
-        moduleQualifier: widget.module.moduleQualifier,
-        child: widget.module.page(context),
-        onPopInvoked: onPop,
-      );
-    }
-
     return CustomPopScope(
       onPopInvoked: onPop,
       moduleQualifier: widget.module.moduleQualifier,
       child: FutureBuilder(
-        /// Register the module as a Future
+        /// Await the module's initialization
         future: _completer.future,
         builder: (context, snapshot) {
           return switch ((snapshot.hasError, snapshot.connectionState)) {
@@ -98,7 +81,8 @@ class _FlutterDDIFutureModuleLoaderState
                     child: Text(snapshot.error.toString()),
                   ),
                 ),
-            (false, ConnectionState.done) => widget.module.page(context),
+            (false, ConnectionState.done) => _cachedWidget ??=
+                widget.module.page(context),
             _ => widget.module.loading ??
                 ddi.getOptional<LoaderModuleInterface>() ??
                 const Center(

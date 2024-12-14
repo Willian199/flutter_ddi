@@ -43,10 +43,11 @@ final class FlutterDDIBuilder<BeanT extends Object> extends StatefulWidget {
 
 class _FlutterDDIBuilderState<BeanT extends Object>
     extends State<FlutterDDIBuilder> {
-  _FlutterDDIBuilderState();
   final Completer completer = Completer();
 
   bool isDestroyed = false;
+
+  Widget? _cachedWidget;
 
   @override
   void initState() {
@@ -76,6 +77,7 @@ class _FlutterDDIBuilderState<BeanT extends Object>
       ddi.destroy<BeanT>(qualifier: widget.moduleName);
     }
 
+    _cachedWidget = null;
     super.dispose();
   }
 
@@ -85,18 +87,11 @@ class _FlutterDDIBuilderState<BeanT extends Object>
 
   @override
   Widget build(BuildContext context) {
-    if (completer.isCompleted) {
-      return CustomPopScope(
-        moduleQualifier: widget.moduleName ?? BeanT,
-        child: widget.child(context),
-        onPopInvoked: onPop,
-      );
-    }
-
     return CustomPopScope(
       onPopInvoked: onPop,
       moduleQualifier: widget.moduleName ?? BeanT,
       child: FutureBuilder(
+        /// Await the module's initialization
         future: completer.future,
         builder: (context, AsyncSnapshot snapshot) {
           return switch ((snapshot.hasError, snapshot.connectionState)) {
@@ -109,7 +104,8 @@ class _FlutterDDIBuilderState<BeanT extends Object>
                     child: Text(snapshot.error.toString()),
                   ),
                 ),
-            (false, ConnectionState.done) => widget.child(context),
+            (false, ConnectionState.done) => _cachedWidget ??=
+                widget.child(context),
             _ => widget.loading ??
                 ddi.getOptional<LoaderModuleInterface>() ??
                 const Center(
