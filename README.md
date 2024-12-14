@@ -35,7 +35,7 @@ class HomeModule extends FlutterDDIModule {
 
   @override
   FutureOr<void> onPostConstruct() {
-    registerApplication<HomeRepository>(() => HomeRepositoryImpl());
+    registerApplication<HomeRepository>(HomeRepositoryImpl.new);
     registerApplication<HomeService>(() => HomeServiceImpl(homeRepository: ddi()));
     registerApplication<HomeController>(() => HomeControllerHomeServiceImpl(homeService: ddi<HomeService>()));
   }
@@ -250,7 +250,7 @@ Example Usage:
         Widget build(BuildContext context) {
             return Column(
                 children: [
-                    FlutterDDIBuilder<BeanT>(
+                    FlutterDDIBuilder<AsyncWidgetModule>(
                       module: AsyncWidgetModule.new,
                       child: (context) => const MyWidget(),
                       moduleName: 'AsyncWidgetModule',

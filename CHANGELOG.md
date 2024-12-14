@@ -1,3 +1,6 @@
+## 0.5.0
+* Bumpped `dart_ddi` to 0.9.0.
+
 ## 0.4.0
 * Flutter constraint increased to >=3.24.0.
 * Fixed destroy modules, where using Flutter >=3.24.0. Navigator.canPop seems to be broken.
