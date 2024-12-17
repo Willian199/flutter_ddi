@@ -7,10 +7,14 @@ import 'package:flutter_ddi/src/wigets/flutter_ddi_module_loader.dart';
 /// This class generates routes based on modules for the Flutter app.
 ///
 final class FlutterDDIRouter {
-  /// Get routes from a list of modules.
-  /// This method creates routes based on the provided list of modules.
-  /// `modules` The list of modules to generate routes from.
+  /// Builds a map of routes from a module definition.
+  /// The method processes all types of modules, including nested and future-loaded modules.
   ///
+  /// - `FlutterDDIPage`: Simple page with a direct WidgetBuilder.
+  /// - `FlutterDDIModule`: Loads a module with dependencies.
+  /// - `FlutterDDIModuleRouter`: Supports nested modules.
+  /// - `FlutterDDIFutureModuleRouter`: Supports future-loaded modules for lazy initialization.
+
   static Map<String, WidgetBuilder> getRoutes(
       {required List<FlutterDDIModuleDefine> modules}) {
     return Map.fromEntries(
@@ -19,6 +23,7 @@ final class FlutterDDIRouter {
 
   static Map<String, WidgetBuilder> _buildModules(FlutterDDIModuleDefine module,
       [String? extraPath]) {
+    assert(module.path.isNotEmpty, 'Module path cannot be empty');
     String path = module.path;
 
     if (extraPath?.isNotEmpty ?? false) {

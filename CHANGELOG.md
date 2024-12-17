@@ -1,3 +1,6 @@
+## 0.6.0
+* Exposed `onEvent` from `EventListener` and `StreamListener`.
+
 ## 0.5.1
 * Fixed issue with `FlutterDDIBuilder` and `FlutterDDIFutureModuleRouter`, was causing tree's change and losing the context.
 

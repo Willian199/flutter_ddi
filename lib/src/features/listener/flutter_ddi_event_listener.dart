@@ -9,7 +9,9 @@ mixin EventListener<StateType extends StatefulWidget,
   EventListenType? _state;
   EventListenType? get state => _state;
 
-  void _onEvent(EventListenType listen) {
+  @protected
+  @mustCallSuper
+  void onEvent(EventListenType listen) {
     setState(() {
       _state = listen;
     });
@@ -19,7 +21,7 @@ mixin EventListener<StateType extends StatefulWidget,
   @mustCallSuper
   @override
   void initState() {
-    ddiEvent.subscribe<EventListenType>(_onEvent);
+    ddiEvent.subscribe<EventListenType>(onEvent);
     super.initState();
   }
 
@@ -27,7 +29,7 @@ mixin EventListener<StateType extends StatefulWidget,
   @mustCallSuper
   @override
   void dispose() {
-    ddiEvent.unsubscribe<EventListenType>(_onEvent);
+    ddiEvent.unsubscribe<EventListenType>(onEvent);
     super.dispose();
   }
 }
