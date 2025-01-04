@@ -9,7 +9,9 @@ mixin StreamListener<StateType extends StatefulWidget,
   StreamListenType? _state;
   StreamListenType? get state => _state;
 
-  void _onEvent(StreamListenType listen) {
+  @protected
+  @mustCallSuper
+  void onEvent(StreamListenType listen) {
     setState(() {
       _state = listen;
     });
@@ -19,7 +21,7 @@ mixin StreamListener<StateType extends StatefulWidget,
   @mustCallSuper
   @override
   void initState() {
-    ddiStream.subscribe<StreamListenType>(callback: _onEvent);
+    ddiStream.subscribe<StreamListenType>(callback: onEvent);
     super.initState();
   }
 

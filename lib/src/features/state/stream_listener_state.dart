@@ -13,17 +13,18 @@ abstract class StreamListenerState<StateType extends StatefulWidget,
   /// The current state of the stream.
   StreamListenType? get state => _state;
 
-  void _onEvent(StreamListenType listen) {
-    setState(() {
-      _state = listen;
-    });
+  @protected
+  @mustCallSuper
+  void onEvent(StreamListenType listen) {
+    _state = listen;
+    setState(() {});
   }
 
   @protected
   @mustCallSuper
   @override
   void initState() {
-    ddiStream.subscribe<StreamListenType>(callback: _onEvent);
+    ddiStream.subscribe<StreamListenType>(callback: onEvent);
     super.initState();
   }
 

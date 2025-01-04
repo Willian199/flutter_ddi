@@ -1,3 +1,8 @@
+## 0.6.0
+* Exposed `onEvent` from `EventListener` and `StreamListener`.
+* Now if the state is null, the `EventListenerState` and `EventListener` will get the last value fired for the event.
+* Bumpped `dart_ddi` to 0.10.0.
+
 ## 0.5.1
 * Fixed issue with `FlutterDDIBuilder` and `FlutterDDIFutureModuleRouter`, was causing tree's change and losing the context.
 

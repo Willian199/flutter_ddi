@@ -11,19 +11,20 @@ abstract class EventListenerState<StateType extends StatefulWidget,
   EventListenType? _state;
 
   /// The current state of the event listener.
-  EventListenType? get state => _state;
+  EventListenType? get state => _state ??= ddiEvent.getValue<EventListenType>();
 
-  void _onEvent(EventListenType listen) {
-    setState(() {
-      _state = listen;
-    });
+  @protected
+  @mustCallSuper
+  void onEvent(EventListenType listen) {
+    _state = listen;
+    setState(() {});
   }
 
   @protected
   @mustCallSuper
   @override
   void initState() {
-    ddiEvent.subscribe<EventListenType>(_onEvent);
+    ddiEvent.subscribe<EventListenType>(onEvent);
     super.initState();
   }
 
@@ -31,7 +32,7 @@ abstract class EventListenerState<StateType extends StatefulWidget,
   @mustCallSuper
   @override
   void dispose() {
-    ddiEvent.unsubscribe<EventListenType>(_onEvent);
+    ddiEvent.unsubscribe<EventListenType>(onEvent);
     super.dispose();
   }
 }

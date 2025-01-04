@@ -7,19 +7,20 @@ import 'package:flutter/widgets.dart';
 mixin EventListener<StateType extends StatefulWidget,
     EventListenType extends Object> on State<StateType> {
   EventListenType? _state;
-  EventListenType? get state => _state;
+  EventListenType? get state => _state ??= ddiEvent.getValue<EventListenType>();
 
-  void _onEvent(EventListenType listen) {
-    setState(() {
-      _state = listen;
-    });
+  @protected
+  @mustCallSuper
+  void onEvent(EventListenType listen) {
+    _state = listen;
+    setState(() {});
   }
 
   @protected
   @mustCallSuper
   @override
   void initState() {
-    ddiEvent.subscribe<EventListenType>(_onEvent);
+    ddiEvent.subscribe<EventListenType>(onEvent);
     super.initState();
   }
 
@@ -27,7 +28,7 @@ mixin EventListener<StateType extends StatefulWidget,
   @mustCallSuper
   @override
   void dispose() {
-    ddiEvent.unsubscribe<EventListenType>(_onEvent);
+    ddiEvent.unsubscribe<EventListenType>(onEvent);
     super.dispose();
   }
 }
