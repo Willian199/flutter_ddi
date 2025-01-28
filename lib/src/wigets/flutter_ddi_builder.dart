@@ -1,9 +1,7 @@
 import 'dart:async';
 
-import 'package:dart_ddi/dart_ddi.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_ddi/src/interfaces/error_module_interface.dart';
-import 'package:flutter_ddi/src/interfaces/loader_module_interface.dart';
+import 'package:flutter_ddi/flutter_ddi.dart';
 import 'package:flutter_ddi/src/wigets/flutter_ddi_custom_pop_scope.dart';
 
 /// Widget that handles dependency injection.
@@ -20,6 +18,7 @@ final class FlutterDDIBuilder<BeanT extends Object> extends StatefulWidget {
     super.key,
     this.error,
     this.loading,
+    this.middlewares = const [],
   });
 
   /// The child widget to be wrapped.
@@ -35,14 +34,20 @@ final class FlutterDDIBuilder<BeanT extends Object> extends StatefulWidget {
   final BeanT Function() module;
 
   /// The name of the module.
-  final String? moduleName;
+  final Object? moduleName;
+
+  final List<Middleware> middlewares;
 
   @override
-  State<FlutterDDIBuilder> createState() => _FlutterDDIBuilderState<BeanT>();
+  State<FlutterDDIBuilder> createState() =>
+      _FlutterDDIBuilderState<BeanT>(module);
 }
 
 class _FlutterDDIBuilderState<BeanT extends Object>
     extends State<FlutterDDIBuilder> {
+  _FlutterDDIBuilderState(this._module);
+  final BeanT Function() _module;
+
   final Completer completer = Completer();
 
   bool isDestroyed = false;
@@ -58,10 +63,24 @@ class _FlutterDDIBuilderState<BeanT extends Object>
 
   Future<void> initialize() async {
     try {
+      final List<Object> middlewaresQualifiers =
+          await Future.wait(widget.middlewares.map((e) => e.register()));
+
       await ddi.registerSingleton<BeanT>(
-        widget.module as BeanT Function(),
+        _module,
         qualifier: widget.moduleName,
+        interceptors: middlewaresQualifiers.toSet(),
+        decorators: [
+          (BeanT b) {
+            if (b is FlutterDDIModuleDefine) {
+              b.context = context;
+            }
+            return b;
+          },
+        ],
       );
+
+      await ddi.getAsync<BeanT>(qualifier: widget.moduleName);
 
       completer.complete();
     } catch (e) {
@@ -75,13 +94,17 @@ class _FlutterDDIBuilderState<BeanT extends Object>
     // Destroy the registered module when the widget is disposed
     if (!isDestroyed) {
       ddi.destroy<BeanT>(qualifier: widget.moduleName);
+
+      widget.middlewares.map((e) => e.destroy());
     }
 
     _cachedWidget = null;
     super.dispose();
   }
 
-  void onPop(bool isDestroyed) {
+  Future<void> onPop(bool isDestroyed) async {
+    await Future.wait(widget.middlewares.map((e) => e.destroy()));
+
     this.isDestroyed = isDestroyed;
   }
 

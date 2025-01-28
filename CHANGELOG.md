@@ -1,3 +1,9 @@
+## 0.7.0
+* Added support to Middlewares.
+
+** Breaking Changes **
+* Removed `FlutterDDIFutureModuleRouter`. Use `FlutterDDIRouter` instead.
+
 ## 0.6.0
 * Exposed `onEvent` from `EventListener` and `StreamListener`.
 * Now if the state is null, the `EventListenerState` and `EventListener` will get the last value fired for the event.

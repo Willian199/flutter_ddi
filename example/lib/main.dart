@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:example/model/detail.dart';
 import 'package:example/page/details_screen.dart';
@@ -35,17 +36,13 @@ class MyApp extends StatelessWidget {
       ///   '/first/details': (_) => DetailsScreen(),
       ///   '/second': (_) => SecondScreen(),
       /// }
-      routes: FlutterDDIRouter.getRoutes(
-        modules: [
-          AppModule(),
-        ],
-      ),
+      routes: AppModule().getRoutes(),
     );
   }
 }
 
 // Main Application Module
-class AppModule extends FlutterDDIModuleRouter {
+class AppModule extends FlutterDDIRouter {
   @override
   String get path => '/';
 
@@ -59,13 +56,48 @@ class AppModule extends FlutterDDIModuleRouter {
       ];
 }
 
+class Luck extends FlutterDDIMiddleware {
+  late final Random random = Random();
+
+  @override
+  Future<FlutterDDIModuleDefine> onGet(FlutterDDIModuleDefine instance) async {
+    final r = random.nextInt(10) + 1;
+    if (r % 2 != 0) {
+      Navigator.of(instance.context).maybePop();
+
+      ScaffoldMessenger.of(instance.context).showSnackBar(
+        const SnackBar(
+          content: Text('You are not allowed to access this page'),
+          duration: Duration(seconds: 3),
+        ),
+      );
+    }
+
+    return super.onGet(instance);
+  }
+
+  /*@override
+  // TODO Fix: Currently don't block pop()
+  FutureOr<void> onDestroy(FlutterDDIModuleDefine? instance) {
+    final r = random.nextInt(10) + 1;
+    if (r % 2 == 0) {
+      //throw UnimplementedError();
+    }
+  }*/
+}
+
 // First Submodule
-class FirstSubModule extends FlutterDDIModuleRouter {
+class FirstSubModule extends FlutterDDIRouter {
   @override
   String get path => '/first';
 
   @override
   WidgetBuilder get page => (_) => const FirstScreen();
+
+  @override
+  List<Middleware> get middlewares => [
+        Middleware.of(factory: Luck.new.builder.asApplication()),
+      ];
 
   @override
   List<FlutterDDIModuleDefine> get modules => [
@@ -74,12 +106,17 @@ class FirstSubModule extends FlutterDDIModuleRouter {
 }
 
 // Details Module
-class DetailsModule extends FlutterDDIModule {
+class DetailsModule extends FlutterDDIModuleRouter {
   @override
   String get path => '/details';
 
   @override
   WidgetBuilder get page => (_) => DetailsScreen();
+
+  @override
+  List<Middleware> get middlewares => [
+        Middleware<Luck>.from(),
+      ];
 
   @override
   void onPostConstruct() {
@@ -88,12 +125,17 @@ class DetailsModule extends FlutterDDIModule {
 }
 
 // Second Submodule
-class SecondSubModule extends FlutterDDIModule {
+class SecondSubModule extends FlutterDDIModuleRouter {
   @override
   String get path => '/second';
 
   @override
   WidgetBuilder get page => (_) => const SecondScreen();
+
+  @override
+  List<Middleware> get middlewares => [
+        Middleware.of(factory: Luck.new.builder.asApplication()),
+      ];
 
   @override
   FutureOr<void> onPostConstruct() {
