@@ -50,7 +50,10 @@ final class Middleware<MiddlewareT extends FlutterDDIMiddleware> {
   Future<Object> register() async {
     if (isFactory) {
       await ddi.register(
-          factory: factory!, qualifier: qualifier, canRegister: canRegister);
+        factory: factory!,
+        qualifier: qualifier,
+        canRegister: canRegister,
+      );
     }
 
     return qualifier;
@@ -64,7 +67,7 @@ final class Middleware<MiddlewareT extends FlutterDDIMiddleware> {
   @nonVirtual
   Future<void> destroy() async {
     if (isFactory) {
-      await ddi.destroy(qualifier: qualifier);
+      ddi.destroy(qualifier: qualifier);
     }
   }
 }

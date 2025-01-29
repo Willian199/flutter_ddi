@@ -60,30 +60,26 @@ class Luck extends FlutterDDIMiddleware {
   late final Random random = Random();
 
   @override
-  Future<FlutterDDIModuleDefine> onGet(FlutterDDIModuleDefine instance) async {
+  Future<MiddlewareResult> onEnter(FlutterDDIModuleDefine instance) async {
     final r = random.nextInt(10) + 1;
     if (r % 2 != 0) {
-      Navigator.of(instance.context).maybePop();
-
       ScaffoldMessenger.of(instance.context).showSnackBar(
         const SnackBar(
           content: Text('You are not allowed to access this page'),
           duration: Duration(seconds: 3),
         ),
       );
+
+      return MiddlewareResult.redirect;
     }
 
-    return super.onGet(instance);
+    return MiddlewareResult.next;
   }
 
-  /*@override
-  // TODO Fix: Currently don't block pop()
-  FutureOr<void> onDestroy(FlutterDDIModuleDefine? instance) {
-    final r = random.nextInt(10) + 1;
-    if (r % 2 == 0) {
-      //throw UnimplementedError();
-    }
-  }*/
+  @override
+  FutureOr<void> redirect(BuildContext context) {
+    Navigator.of(context).popUntil(ModalRoute.withName('/'));
+  }
 }
 
 // First Submodule

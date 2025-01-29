@@ -12,6 +12,9 @@ sealed class FlutterDDIModuleDefine with PreDestroy {
   /// Used to define the route of the module.
   String get path => '$runtimeType';
 
+  /// Get the page associated with the module.
+  WidgetBuilder get page;
+
   Object get moduleQualifier => runtimeType;
 
   List<Middleware> get middlewares => [];
@@ -56,9 +59,6 @@ abstract class FlutterDDIPage extends FlutterDDIModuleDefine {
 
   FlutterDDIPage();
 
-  /// Get the page associated with the module.
-  WidgetBuilder get page;
-
   @override
   Future<void> destroy() async {
     await ddi.destroy(qualifier: moduleQualifier);
@@ -89,9 +89,6 @@ class _FactoryFlutterDDIPage extends FlutterDDIPage {
 abstract class FlutterDDIModuleRouter = FlutterDDIRouter with DDIModule;
 
 abstract class FlutterDDIRouter extends FlutterDDIModuleDefine {
-  /// Get the page associated with the module.
-  WidgetBuilder get page;
-
   /// Get the list of modules associated with the router.
   List<FlutterDDIModuleDefine> get modules => [];
 

@@ -8,6 +8,7 @@ export 'src/features/listener/flutter_ddi_event_listener.dart';
 export 'src/features/listener/flutter_ddi_stream_listener.dart';
 export 'src/features/middleware/flutter_ddi_middleware.dart';
 export 'src/features/middleware/middleware.dart';
+export 'src/features/middleware/middleware_result.dart';
 export 'src/features/state/event_listener_state.dart';
 export 'src/features/state/stream_listener_state.dart';
 export 'src/interfaces/error_module_interface.dart';
