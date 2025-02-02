@@ -46,14 +46,14 @@ class _FlutterDDIRouterLoaderState extends State<FlutterDDIRouterLoader> {
 
   Future<void> initialize() async {
     try {
-      final List<Object> middlewaresQualifiers = await Future.wait(_module.middlewares.map((e) => e.register()));
+      final List<Object> interceptorsQualifiers = await Future.wait(_module.interceptors.map((e) => e.register()));
 
       _module.context = context;
 
       await ddi.registerObject<FlutterDDIModuleDefine>(
         _module,
         qualifier: moduleQualifier,
-        interceptors: middlewaresQualifiers.toSet(),
+        interceptors: interceptorsQualifiers.toSet(),
       );
 
       _completer.complete();
@@ -73,14 +73,14 @@ class _FlutterDDIRouterLoaderState extends State<FlutterDDIRouterLoader> {
         qualifier: moduleQualifier,
       );
 
-      await Future.wait(_module.middlewares.map((e) => e.destroy()));
+      await Future.wait(_module.interceptors.map((e) => e.destroy()));
     }
 
     _cachedWidget = null;
   }
 
   Future<void> onPop(bool isDestroyed) async {
-    await Future.wait(_module.middlewares.map((e) => e.destroy()));
+    await Future.wait(_module.interceptors.map((e) => e.destroy()));
 
     this.isDestroyed = isDestroyed;
   }

@@ -10,6 +10,7 @@ class FirstScreen extends StatelessWidget {
       appBar: AppBar(title: const Text('First Screen')),
       body: Center(
         child: Column(
+          spacing: 20,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text('First Screen'),

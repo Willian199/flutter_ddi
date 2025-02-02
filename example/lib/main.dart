@@ -57,11 +57,11 @@ class AppModule extends FlutterDDIRouter {
       ];
 }
 
-class Luck extends FlutterDDIMiddleware {
+class Luck extends FlutterDDIInterceptor {
   late final Random random = Random();
 
   @override
-  Future<MiddlewareResult> onEnter(FlutterDDIModuleDefine instance) async {
+  Future<InterceptorResult> onEnter(FlutterDDIModuleDefine instance) async {
     final r = random.nextInt(10) + 1;
     if (r % 2 != 0) {
       ScaffoldMessenger.of(instance.context).showSnackBar(
@@ -71,10 +71,10 @@ class Luck extends FlutterDDIMiddleware {
         ),
       );
 
-      return MiddlewareResult.redirect;
+      return InterceptorResult.redirect;
     }
 
-    return MiddlewareResult.next;
+    return InterceptorResult.next;
   }
 
   @override
@@ -92,8 +92,8 @@ class FirstSubModule extends FlutterDDIRouter {
   WidgetBuilder get page => (_) => const FirstScreen();
 
   @override
-  List<Middleware> get middlewares => [
-        Middleware.of(factory: Luck.new.builder.asApplication()),
+  List<ModuleInterceptor> get interceptors => [
+        ModuleInterceptor.of(factory: Luck.new.builder.asApplication()),
       ];
 
   @override
@@ -111,8 +111,8 @@ class DetailsModule extends FlutterDDIModuleRouter {
   WidgetBuilder get page => (_) => DetailsScreen();
 
   @override
-  List<Middleware> get middlewares => [
-        Middleware<Luck>.from(),
+  List<ModuleInterceptor> get interceptors => [
+        ModuleInterceptor<Luck>.from(),
       ];
 
   @override
@@ -130,8 +130,8 @@ class SecondSubModule extends FlutterDDIModuleRouter {
   WidgetBuilder get page => (_) => const SecondScreen();
 
   @override
-  List<Middleware> get middlewares => [
-        Middleware.of(factory: Luck.new.builder.asApplication()),
+  List<ModuleInterceptor> get interceptors => [
+        ModuleInterceptor.of(factory: Luck.new.builder.asApplication()),
       ];
 
   @override

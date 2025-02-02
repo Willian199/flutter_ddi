@@ -3,15 +3,15 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ddi/flutter_ddi.dart';
-import 'package:flutter_ddi/src/features/middleware/middleware_blocked.dart';
+import 'package:flutter_ddi/src/exception/interceptor_blocked.dart';
 
-/// A middleware interface for intercepting and modifying the behavior of
+/// A Interceptor to modifying the behavior of
 /// `FlutterDDIModuleDefine` instances.
 ///
-/// `FlutterDDIMiddleware` extends the `DDIInterceptor` class, providing
+/// `FlutterDDIInterceptor` extends the `DDIInterceptor` class, providing
 /// a mechanism to control the lifecycle and access of modules.
 ///
-abstract class FlutterDDIMiddleware extends DDIInterceptor<FlutterDDIModuleDefine> {
+abstract class FlutterDDIInterceptor extends DDIInterceptor<FlutterDDIModuleDefine> {
   @nonVirtual
   @override
   FutureOr<void> onDispose(instance) {}
@@ -31,25 +31,25 @@ abstract class FlutterDDIMiddleware extends DDIInterceptor<FlutterDDIModuleDefin
   Future<FlutterDDIModuleDefine> onCreate(FlutterDDIModuleDefine instance) async {
     final result = await onEnter(instance);
 
-    if (result == MiddlewareResult.stop) {
+    if (result == InterceptorResult.stop) {
       await onFail(instance);
       Navigator.of(instance.context).pop();
-      throw const MiddlewareBlockedException('MiddlewareResult.stop');
+      throw const InterceptorBlockedException('InterceptorResult.stop');
     }
 
-    if (result == MiddlewareResult.redirect) {
+    if (result == InterceptorResult.redirect) {
       await ddi.destroy<FlutterDDIModuleDefine>(
         qualifier: instance.moduleQualifier,
       );
       redirect(instance.context);
-      throw const MiddlewareBlockedException('MiddlewareResult.redirect');
+      throw const InterceptorBlockedException('InterceptorResult.redirect');
     }
 
     return instance;
   }
 
-  FutureOr<MiddlewareResult> onEnter(FlutterDDIModuleDefine instance) {
-    return MiddlewareResult.next;
+  FutureOr<InterceptorResult> onEnter(FlutterDDIModuleDefine instance) {
+    return InterceptorResult.next;
   }
 
   FutureOr<void> onFail(FlutterDDIModuleDefine instance) {}

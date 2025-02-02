@@ -1,5 +1,5 @@
 ## 0.7.0
-* Added support to Middlewares.
+* Better support for intercepting module loading.
 
 ** Breaking Changes **
 * Removed `FlutterDDIFutureModuleRouter`. Use `FlutterDDIRouter` instead.

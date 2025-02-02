@@ -17,7 +17,7 @@ sealed class FlutterDDIModuleDefine with PreDestroy {
 
   Object get moduleQualifier => runtimeType;
 
-  List<Middleware> get middlewares => [];
+  List<ModuleInterceptor> get interceptors => [];
 
   BuildContext? _context;
 
@@ -39,7 +39,7 @@ sealed class FlutterDDIModuleDefine with PreDestroy {
   @override
   @mustCallSuper
   FutureOr<void> onPreDestroy() async {
-    await Future.wait(middlewares.map((e) => e.destroy()));
+    await Future.wait(interceptors.map((e) => e.destroy()));
   }
 
   Future<void> destroy();
@@ -52,9 +52,9 @@ abstract class FlutterDDIPage extends FlutterDDIModuleDefine {
   factory FlutterDDIPage.from({
     required String path,
     required WidgetBuilder page,
-    List<Middleware>? middlewares,
+    List<ModuleInterceptor>? interceptors,
   }) {
-    return _FactoryFlutterDDIPage(path, page, middlewares);
+    return _FactoryFlutterDDIPage(path, page, interceptors);
   }
 
   FlutterDDIPage();
@@ -70,11 +70,11 @@ abstract class FlutterDDIPage extends FlutterDDIModuleDefine {
 /// Factory implementation of FlutterDDIPage.
 /// This class implements the creation of a FlutterDDIPage.
 class _FactoryFlutterDDIPage extends FlutterDDIPage {
-  _FactoryFlutterDDIPage(this._path, this._page, this._middlewares);
+  _FactoryFlutterDDIPage(this._path, this._page, this._interceptors);
 
   final String _path;
   final WidgetBuilder _page;
-  final List<Middleware>? _middlewares;
+  final List<ModuleInterceptor>? _interceptors;
 
   @override
   String get path => _path;
@@ -83,7 +83,7 @@ class _FactoryFlutterDDIPage extends FlutterDDIPage {
   WidgetBuilder get page => _page;
 
   @override
-  List<Middleware> get middlewares => _middlewares ?? [];
+  List<ModuleInterceptor> get interceptors => _interceptors ?? [];
 }
 
 abstract class FlutterDDIModuleRouter = FlutterDDIRouter with DDIModule;
