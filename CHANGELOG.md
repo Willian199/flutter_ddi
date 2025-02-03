@@ -3,6 +3,7 @@
 
 ** Breaking Changes **
 * Removed `FlutterDDIFutureModuleRouter`. Use `FlutterDDIRouter` instead.
+* Removed route generation from `FlutterDDIRouter.getRoutes(modules:[])`.
 
 ## 0.6.0
 * Exposed `onEvent` from `EventListener` and `StreamListener`.

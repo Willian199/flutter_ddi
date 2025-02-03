@@ -10,12 +10,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_ddi/flutter_ddi.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 // Main Application
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
+
+  late final AppModule appModule = AppModule();
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +39,7 @@ class MyApp extends StatelessWidget {
       ///   '/first/details': (_) => DetailsScreen(),
       ///   '/second': (_) => SecondScreen(),
       /// }
-      routes: AppModule().getRoutes(),
+      routes: appModule.getRoutes(),
     );
   }
 }

@@ -80,7 +80,7 @@ class _FlutterDDIBuilderState<BeanT extends Object> extends State<FlutterDDIBuil
     super.dispose();
   }
 
-  Future<void> onPop(bool isDestroyed) async {
+  void onPop(bool isDestroyed) {
     this.isDestroyed = isDestroyed;
   }
 

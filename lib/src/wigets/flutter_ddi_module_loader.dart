@@ -79,9 +79,7 @@ class _FlutterDDIRouterLoaderState extends State<FlutterDDIRouterLoader> {
     _cachedWidget = null;
   }
 
-  Future<void> onPop(bool isDestroyed) async {
-    await Future.wait(_module.interceptors.map((e) => e.destroy()));
-
+  void onPop(bool isDestroyed) {
     this.isDestroyed = isDestroyed;
   }
 
