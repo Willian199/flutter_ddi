@@ -10,9 +10,8 @@ extension FlutterDDIRouterExtension on FlutterDDIRouter {
   /// The method processes all types of modules, including nested and future-loaded modules.
   ///
   /// - `FlutterDDIPage`: Simple page with a direct WidgetBuilder.
-  /// - `FlutterDDIRouter`: Loads a module with dependencies.
-  /// - `FlutterDDIModule`: Supports nested modules.
-  /// - `FlutterDDIFutureModuleRouter`: Supports future-loaded modules for lazy initialization.
+  /// - `FlutterDDIRouter`: Supports nested modules.
+  /// - `FlutterDDIModuleRouter`: Loads a module with dependencies.
 
   Map<String, WidgetBuilder> getRoutes() {
     return Map.fromEntries(_buildModules(this).entries);

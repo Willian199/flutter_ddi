@@ -25,19 +25,23 @@ The `flutter_ddi` offers a range of features that can be easily integrated into 
 
 ## Defining Modules and Routes
 
-### FlutterDDIModule
-The `FlutterDDIModule` class is an abstraction that allows defining a module to organize and encapsulate specific dependencies.
+## Defining Modules and Routes
 
-Example Usage:
+### FlutterDDIModuleRouter
+The `FlutterDDIModuleRouter` class is an abstraction that allows defining a module to organize and encapsulate specific dependencies. It simplifies modular navigation and decouples dependency registration.
+
+`interceptors:` This property allows you to define a list of ModuleInterceptor instances that can intercept and handle operations during the module's creation. By default, it returns an empty list but can be extended to handle custom logic, such as logging, security, or validation tasks.
+
+#### Example Usage:
 
 ```dart
-class HomeModule extends FlutterDDIModule {
+class HomeModule extends FlutterDDIModuleRouter {
 
   @override
   FutureOr<void> onPostConstruct() {
     registerApplication<HomeRepository>(HomeRepositoryImpl.new);
     registerApplication<HomeService>(() => HomeServiceImpl(homeRepository: ddi()));
-    registerApplication<HomeController>(() => HomeControllerHomeServiceImpl(homeService: ddi<HomeService>()));
+    registerApplication<HomeController>(() => HomeControllerImpl(homeService: ddi<HomeService>()));
   }
 
   @override
@@ -45,16 +49,22 @@ class HomeModule extends FlutterDDIModule {
 
   @override
   String get path => '/home';
+
+  @override
+  List<ModuleInterceptor> get interceptors => [
+    ModuleInterceptor.of(factory: AuthInterceptor.new.builder.asApplication()),
+    ModuleInterceptor<CountryInterceptor>.from(),
+  ];
 }
 ```
 
-### FlutterDDIModuleRouter
-The `FlutterDDIModuleRouter` class is used to define routes that contain modules. With it, you can organize the application navigation in a modular way, facilitating code maintenance and expansion.
+### FlutterDDIRouter
+The `FlutterDDIRouter` class is used to define routes that contain modules. With it, you can organize the application navigation in a modular way, facilitating code maintenance and expansion.
 
 Example Usage:
 
 ```dart
-class SplashModule extends FlutterDDIModuleRouter {
+class SplashModule extends FlutterDDIRouter {
 
   @override
   WidgetBuilder get page => (_) => const SplashPage();
@@ -71,88 +81,12 @@ class SplashModule extends FlutterDDIModuleRouter {
 }
 ```
 
-You can also use the `DDIModule` mixin in a class that extends `FlutterDDIModuleRouter`. This allows creating a structure of modules with submodules.
-
-Example Usage:
-
-```dart
-class SplashModule extends FlutterDDIModuleRouter with DDIModule {
-
-  @override
-  FutureOr<void> onPostConstruct() {
-    registerSingleton<DioForNative>(() => RestClient('http://my-url'));
-  }
-
-  @override
-  WidgetBuilder get page => (_) => const SplashPage();
-
-  @override
-  String get path => '/';
-
-  @override
-  List<FlutterDDIModuleDefine> get modules => [
-    FlutterDDIPage.from(path: 'signup', page: (_) => const SignupPage()),
-    LoginModule(),
-    HomeModule(),
-  ];
-}
-```
-
-### FlutterDDIFutureModuleRouter
-The `FlutterDDIFutureModuleRouter` class is used to create modules that have `Future` loading. Making it possible to `await` for initialization before accessing the route
-
-Example Usage:
-
-```dart
-class SplashModule extends FlutterDDIFutureModuleRouter {
-
-  @override
-  Future<void> onPostConstruct() async{
-    await registerSingleton<Databaseconnection>(() async => Databaseconnection());
-  }
-
-  @override
-  WidgetBuilder get page => (_) => const SplashPage();
-
-  @override
-  String get path => '/';
-
-  @override
-  List<FlutterDDIModuleDefine> get modules => [
-    FlutterDDIPage.from(path: 'signup', page: (_) => const SignupPage()),
-    LoginModule(),
-    HomeModule(),
-  ];
-
-  @override
-  Widget get error => const SizedBox.shrink();
-
-  @override
-  Widget get loading => const Center(child: CircularProgressIndicator());
-
-}
-```
-
 ### FlutterDDIPage
 The `FlutterDDIPage` class allows defining pages that do not have any dependencies.
 
 Example Usage:
 
 ```dart
-class HomePage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Home Page'),
-      ),
-      body: Center(
-        child: Text('Home Page Content'),
-      ),
-    );
-  }
-}
-
 class HomeModule extends FlutterDDIPage {
   @override
   WidgetBuilder get page => (_) => const HomePage();
@@ -162,11 +96,11 @@ class HomeModule extends FlutterDDIPage {
 }
 ```
 
-## Using the FlutterDDIRouter
+## Creating Routes
 
-The `FlutterDDIRouter` class is a utility that allows building application routes from the defined modules and pages. With it, you can get a map of routes ready to be used with the Flutter Navigator.
+To define routes for your application, you need to create a class that extends `FlutterDDIRouter`. This allows you to organize the application's navigation by combining modules and pages. With this approach, you can easily generate a map of routes ready to be used with the Flutter Navigator.
 
-Example Usage:
+### Example Usage:
 
 ```dart
 void main() {
@@ -179,12 +113,69 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'My App',
       initialRoute: '/',
-      routes: FlutterDDIRouter.getRoutes(
-        modules: [
-            SplashModule(),
-        ],
-      ),
+      routes: SplashModule().getRoutes(), // Retrieves the routes from the SplashModule
     );
+  }
+}
+```
+
+## Interceptors
+
+Interceptors provide a way to control and manage application flow during route navigation. They allow to handle custom logic when the module is created.
+
+### Key Methods
+
+A class that extends `FlutterDDIInterceptor` should override the following methods:
+
+- **`onEnter(FlutterDDIModuleDefine instance)`**  
+  This method is triggered before accessing the associated module. It should return an instance of `InterceptorResult` to control the flow:
+  
+  - `InterceptorResult.next`: Proceed to the next Interceptor or load the module.
+  - `InterceptorResult.redirect`: Redirect to another page or terminate navigation.
+  - `InterceptorResult.stop`: Stop navigation and blocking the module load.
+
+- **`onFail(FlutterDDIModuleDefine instance)`**  
+  If `InterceptorResult.stop` is returned from `onEnter`, this method is executed to perform any custom logic. Also, they auto `pop` the navigation.
+
+- **`redirect(BuildContext context)`**  
+  If `InterceptorResult.redirect` is returned from `onEnter`, this method is executed to perform the redirection logic. 
+
+---
+
+### Example Usage: Access Control with a Luck-Based Interceptor
+
+The following example demonstrates an interceptor that randomly denies access to a page.
+
+```dart
+class Luck extends FlutterDDIInterceptor {
+  late final Random random = Random();
+
+  @override
+  Future<InterceptorResult> onEnter(FlutterDDIModuleDefine instance) async {
+    final r = random.nextInt(10) + 1;
+
+    if (r % 2 != 0) {
+      ScaffoldMessenger.of(instance.context).showSnackBar(
+        const SnackBar(
+          content: Text('You are not allowed to access this page'),
+          duration: Duration(seconds: 3),
+        ),
+      );
+
+      return InterceptorResult.redirect; // Deny access and trigger redirection
+    }
+
+    return InterceptorResult.next; // Allow access
+  }
+
+  @override
+  FutureOr<void> onFail(FlutterDDIModuleDefine instance) {
+    // Handle failure scenarios if needed
+  }
+
+  @override
+  FutureOr<void> redirect(BuildContext context) {
+    Navigator.of(context).popUntil(ModalRoute.withName('/')); // Redirect to the root route
   }
 }
 ```

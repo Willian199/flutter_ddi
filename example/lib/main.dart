@@ -78,6 +78,9 @@ class Luck extends FlutterDDIInterceptor {
   }
 
   @override
+  FutureOr<void> onFail(FlutterDDIModuleDefine instance) {}
+
+  @override
   FutureOr<void> redirect(BuildContext context) {
     Navigator.of(context).popUntil(ModalRoute.withName('/'));
   }
