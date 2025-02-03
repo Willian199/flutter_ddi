@@ -1,3 +1,10 @@
+## 0.7.0
+* Better support for intercepting module loading.
+
+** Breaking Changes **
+* Removed `FlutterDDIFutureModuleRouter`. Use `FlutterDDIRouter` instead.
+* Removed route generation from `FlutterDDIRouter.getRoutes(modules:[])`.
+
 ## 0.6.0
 * Exposed `onEvent` from `EventListener` and `StreamListener`.
 * Now if the state is null, the `EventListenerState` and `EventListener` will get the last value fired for the event.

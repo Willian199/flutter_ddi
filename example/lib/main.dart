@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:example/model/detail.dart';
 import 'package:example/page/details_screen.dart';
@@ -9,17 +10,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_ddi/flutter_ddi.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 // Main Application
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
+
+  late final AppModule appModule = AppModule();
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter DDI Routing Example',
+      initialRoute: '/',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.blue,
@@ -35,17 +39,13 @@ class MyApp extends StatelessWidget {
       ///   '/first/details': (_) => DetailsScreen(),
       ///   '/second': (_) => SecondScreen(),
       /// }
-      routes: FlutterDDIRouter.getRoutes(
-        modules: [
-          AppModule(),
-        ],
-      ),
+      routes: appModule.getRoutes(),
     );
   }
 }
 
 // Main Application Module
-class AppModule extends FlutterDDIModuleRouter {
+class AppModule extends FlutterDDIRouter {
   @override
   String get path => '/';
 
@@ -59,13 +59,47 @@ class AppModule extends FlutterDDIModuleRouter {
       ];
 }
 
+class Luck extends FlutterDDIInterceptor {
+  late final Random random = Random();
+
+  @override
+  Future<InterceptorResult> onEnter(FlutterDDIModuleDefine instance) async {
+    final r = random.nextInt(10) + 1;
+    if (r % 2 != 0) {
+      ScaffoldMessenger.of(instance.context).showSnackBar(
+        const SnackBar(
+          content: Text('You are not allowed to access this page'),
+          duration: Duration(seconds: 3),
+        ),
+      );
+
+      return InterceptorResult.redirect;
+    }
+
+    return InterceptorResult.next;
+  }
+
+  @override
+  FutureOr<void> onFail(FlutterDDIModuleDefine instance) {}
+
+  @override
+  FutureOr<void> redirect(BuildContext context) {
+    Navigator.of(context).popUntil(ModalRoute.withName('/'));
+  }
+}
+
 // First Submodule
-class FirstSubModule extends FlutterDDIModuleRouter {
+class FirstSubModule extends FlutterDDIRouter {
   @override
   String get path => '/first';
 
   @override
   WidgetBuilder get page => (_) => const FirstScreen();
+
+  @override
+  List<ModuleInterceptor> get interceptors => [
+        ModuleInterceptor.of(factory: Luck.new.builder.asApplication()),
+      ];
 
   @override
   List<FlutterDDIModuleDefine> get modules => [
@@ -74,12 +108,17 @@ class FirstSubModule extends FlutterDDIModuleRouter {
 }
 
 // Details Module
-class DetailsModule extends FlutterDDIModule {
+class DetailsModule extends FlutterDDIModuleRouter {
   @override
   String get path => '/details';
 
   @override
   WidgetBuilder get page => (_) => DetailsScreen();
+
+  @override
+  List<ModuleInterceptor> get interceptors => [
+        ModuleInterceptor<Luck>.from(),
+      ];
 
   @override
   void onPostConstruct() {
@@ -88,12 +127,17 @@ class DetailsModule extends FlutterDDIModule {
 }
 
 // Second Submodule
-class SecondSubModule extends FlutterDDIModule {
+class SecondSubModule extends FlutterDDIModuleRouter {
   @override
   String get path => '/second';
 
   @override
   WidgetBuilder get page => (_) => const SecondScreen();
+
+  @override
+  List<ModuleInterceptor> get interceptors => [
+        ModuleInterceptor.of(factory: Luck.new.builder.asApplication()),
+      ];
 
   @override
   FutureOr<void> onPostConstruct() {
