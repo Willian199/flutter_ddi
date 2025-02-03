@@ -11,7 +11,8 @@ import 'package:flutter_ddi/src/exception/interceptor_blocked.dart';
 /// `FlutterDDIInterceptor` extends the `DDIInterceptor` class, providing
 /// a mechanism to control the lifecycle and access of modules.
 ///
-abstract class FlutterDDIInterceptor extends DDIInterceptor<FlutterDDIModuleDefine> {
+abstract class FlutterDDIInterceptor
+    extends DDIInterceptor<FlutterDDIModuleDefine> {
   @nonVirtual
   @override
   FutureOr<void> onDispose(instance) {}
@@ -28,7 +29,8 @@ abstract class FlutterDDIInterceptor extends DDIInterceptor<FlutterDDIModuleDefi
 
   @nonVirtual
   @override
-  Future<FlutterDDIModuleDefine> onCreate(FlutterDDIModuleDefine instance) async {
+  Future<FlutterDDIModuleDefine> onCreate(
+      FlutterDDIModuleDefine instance) async {
     final result = await onEnter(instance);
 
     if (result == InterceptorResult.stop) {
