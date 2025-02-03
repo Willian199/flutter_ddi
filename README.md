@@ -21,16 +21,12 @@ The `flutter_ddi` offers a range of features that can be easily integrated into 
 
 - **Flexibility and scalability**: This package is designed to be flexible and scalable, allowing you to add and change dependencies as needed without impact on other parts of the code.
 
-## Using flutter_ddi
-
-## Defining Modules and Routes
-
 ## Defining Modules and Routes
 
 ### FlutterDDIModuleRouter
 The `FlutterDDIModuleRouter` class is an abstraction that allows defining a module to organize and encapsulate specific dependencies. It simplifies modular navigation and decouples dependency registration.
 
-`interceptors:` This property allows you to define a list of ModuleInterceptor instances that can intercept and handle operations during the module's creation. By default, it returns an empty list but can be extended to handle custom logic, such as logging, security, or validation tasks.
+`interceptors:` This property allows you to define a list of `ModuleInterceptor` instances that can intercept and handle operations during the module's creation. By default, it returns an empty list but can be extended to handle custom logic, such as logging, security, or validation tasks.
 
 #### Example Usage:
 
@@ -108,12 +104,14 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  late final SplashModule _splashModule = SplashModule();
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'My App',
       initialRoute: '/',
-      routes: SplashModule().getRoutes(), // Retrieves the routes from the SplashModule
+      routes: _splashModule.getRoutes(), // Retrieves the routes from the SplashModule
     );
   }
 }
