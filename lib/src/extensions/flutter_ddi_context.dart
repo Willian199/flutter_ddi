@@ -49,8 +49,7 @@ extension FlutterDDIContext on BuildContext {
     ParameterT? parameter,
     Object? qualifier,
   }) {
-    return ddi.getOptionalWith<BeanT, ParameterT>(
-        qualifier: qualifier, parameter: parameter);
+    return ddi.getOptionalWith<BeanT, ParameterT>(qualifier: qualifier, parameter: parameter);
   }
 
   /// Asynchronously retrieves an optional instance of the registered class.
@@ -68,12 +67,10 @@ extension FlutterDDIContext on BuildContext {
   /// - `parameter`: (Optional) Parameter to pass during instance creation.
   ///
   /// This method supports asynchronous retrieval with a parameter.
-  Future<BeanT?>
-      getOptionalWithAsync<BeanT extends Object, ParameterT extends Object>({
+  Future<BeanT?> getOptionalWithAsync<BeanT extends Object, ParameterT extends Object>({
     ParameterT? parameter,
     Object? qualifier,
   }) {
-    return ddi.getOptionalWithAsync<BeanT, ParameterT>(
-        qualifier: qualifier, parameter: parameter);
+    return ddi.getOptionalAsyncWith<BeanT, ParameterT>(qualifier: qualifier, parameter: parameter);
   }
 }

@@ -3,9 +3,14 @@ import 'package:example/model/detail.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ddi/flutter_ddi.dart';
 
-class DetailsScreen extends StatelessWidget with DDIInject<Detail> {
-  DetailsScreen({super.key});
+class DetailsScreen extends StatefulWidget {
+  const DetailsScreen({super.key});
 
+  @override
+  State<DetailsScreen> createState() => _DetailsScreenState();
+}
+
+class _DetailsScreenState extends ListenableState<DetailsScreen, Detail> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -14,7 +19,7 @@ class DetailsScreen extends StatelessWidget with DDIInject<Detail> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(instance.message),
+            Text(listenable.value),
             ElevatedButton(
               onPressed: () {
                 Navigator.of(context).pop();
