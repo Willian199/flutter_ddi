@@ -166,7 +166,7 @@ Example Usage:
     }
 ```
 
-## Simplified Flutter Integration
+## Simplified Listener Integration
 
 The `ListenableState` class and `ListenableMixin` simplify the use of `ValueNotifier` and `ChangeNotifier` in Flutter applications. These utilities provide a way to integrate Listenable objects into StatefulWidget with less code.
 
