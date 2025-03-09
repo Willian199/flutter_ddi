@@ -166,6 +166,48 @@ Example Usage:
     }
 ```
 
+## Simplified Flutter Integration
+
+The `ListenableState` class and `ListenableMixin` simplify the use of `ValueNotifier` and `ChangeNotifier` in Flutter applications. These utilities provide a way to integrate Listenable objects into StatefulWidget with less code.
+
+### How It Works
+
+`ListenableState` and `ListenableMixin` automatically register and unregister listeners in initState and dispose, ensuring efficient state handling. This approach eliminates the need for explicit listener management, reducing boilerplate code and improving maintainability.
+
+Example Usage:
+
+```dart	
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+/// Uses ListenableState to bind with a ChangeNotifier or ValueNotifier.
+class _HomePageState extends ListenableState<HomePage, HomePageModel> {
+  @override
+  Widget build(BuildContext context) {
+    return Text('Welcome ${listenable.name} ${listenable.surname}');
+  }
+}
+
+/// Example model implementing ChangeNotifier.
+class HomePageModel extends ChangeNotifier {
+  String _name = 'John';
+  String _surname = 'Wick';
+
+  String get name => _name;
+  String get surname => _surname;
+
+  void update(String name, String surname) {
+    _name = name;
+    _surname = surname;
+    notifyListeners();
+  }
+}
+```
+
 # Known Limitation
 
 `Circular Routes:` At present, the package does not fully support circular route structures. Defining circular dependencies between routes will lead to errors during the module registration process.

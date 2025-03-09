@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_ddi/flutter_ddi.dart';
 
-final class ModuleInterceptor<InterceptorT extends FlutterDDIInterceptor> {
+final class ModuleInterceptor<InterceptorT extends DDIInterceptor> {
   /// Use to register a new Interceptor.
   factory ModuleInterceptor.of({
     required ScopeFactory<InterceptorT> factory,
