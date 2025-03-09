@@ -117,114 +117,6 @@ class MyApp extends StatelessWidget {
 }
 ```
 
-## Interceptors
-
-Interceptors provide a way to control and manage application flow during route navigation. They allow to handle custom logic when the module is created.
-
-### Key Methods
-
-A class that extends `FlutterDDIInterceptor` should override the following methods:
-
-- **`onEnter(FlutterDDIModuleDefine instance)`**  
-  This method is triggered before accessing the associated module. It should return an instance of `InterceptorResult` to control the flow:
-  
-  - `InterceptorResult.next`: Proceed to the next Interceptor or load the module.
-  - `InterceptorResult.redirect`: Redirect to another page or terminate navigation.
-  - `InterceptorResult.stop`: Stop navigation and blocking the module load.
-
-- **`onFail(FlutterDDIModuleDefine instance)`**  
-  If `InterceptorResult.stop` is returned from `onEnter`, this method is executed to perform any custom logic. Also, they auto `pop` the navigation.
-
-- **`redirect(BuildContext context)`**  
-  If `InterceptorResult.redirect` is returned from `onEnter`, this method is executed to perform the redirection logic. 
-
----
-
-### Example Usage: Access Control with a Luck-Based Interceptor
-
-The following example demonstrates an interceptor that randomly denies access to a page.
-
-```dart
-class Luck extends FlutterDDIInterceptor {
-  late final Random random = Random();
-
-  @override
-  Future<InterceptorResult> onEnter(FlutterDDIModuleDefine instance) async {
-    final r = random.nextInt(10) + 1;
-
-    if (r % 2 != 0) {
-      ScaffoldMessenger.of(instance.context).showSnackBar(
-        const SnackBar(
-          content: Text('You are not allowed to access this page'),
-          duration: Duration(seconds: 3),
-        ),
-      );
-
-      return InterceptorResult.redirect; // Deny access and trigger redirection
-    }
-
-    return InterceptorResult.next; // Allow access
-  }
-
-  @override
-  FutureOr<void> onFail(FlutterDDIModuleDefine instance) {
-    // Handle failure scenarios if needed
-  }
-
-  @override
-  FutureOr<void> redirect(BuildContext context) {
-    Navigator.of(context).popUntil(ModalRoute.withName('/')); // Redirect to the root route
-  }
-}
-```
-
-## Simplified State Management
-
-Managing state in Flutter applications, especially for medium or smaller projects, doesn't always require complex state management solutions. For apps where simplicity and efficiency are key, using these mixins and classes for state management can be a straightforward and effective approach. But for larger and complex projects, it's recommended to use a proper state management solutions.
-
-### How It Works
-Under the hood, these mixins utilize the `setState` method to update the widget's state. They handle registering an event or stream in the `initState` and cleaning up in the `dispose` method.
-
-#### Example Usage:
-
-```dart
-    class HomePage extends StatefulWidget {
-        const HomePage({super.key});
-
-        @override
-        State<HomePage> createState() => _HomePageState();
-    }
-
-    /// You can extend `StreamListenerState` or `EventListenerState` or use the mixin `StreamListener` or `EventListener`
-    class _HomePageState extends StreamListenerState<HomePage, HomePageModel> {
-    // class _HomePageState extends EventListenerState<HomePage, HomePageModel> {
-    // class _HomePageState extends State<HomePage> with StreamListener<HomePage, HomePageModel> {
-    // class _HomePageState extends State<HomePage> with EventListener<HomePage, HomePageModel> {
-
-      Widget build(BuildContext context) {
-          return Text('Welcome ${state.name} ${state.surname}');
-      } 
-    }
-
-    class HomePageModel {
-      final String name;
-      final String surname;
-
-      HomePageModel(this.name, this.surname);
-    }
-
-    class HomePageControler with DDIEventSender<HomePageModel> {
-    //class HomePageControler with DDIStreamSender<HomePageModel>{
-
-      String name = 'John'; 
-      String surname = 'Wick';
-
-      void update() {
-        fire(HomePageModel(name, surname));
-      }
-    }
-```
-
 ### FlutterDDIBuilder
 
 The Widget `FlutterDDIBuilder` handles dependency injection by wrapping a builder and registering its module asynchronously.
@@ -272,6 +164,48 @@ Example Usage:
             return Container();
         }
     }
+```
+
+## Simplified Flutter Integration
+
+The `ListenableState` class and `ListenableMixin` simplify the use of `ValueNotifier` and `ChangeNotifier` in Flutter applications. These utilities provide a way to integrate Listenable objects into StatefulWidget with less code.
+
+### How It Works
+
+`ListenableState` and `ListenableMixin` automatically register and unregister listeners in initState and dispose, ensuring efficient state handling. This approach eliminates the need for explicit listener management, reducing boilerplate code and improving maintainability.
+
+Example Usage:
+
+```dart	
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+/// Uses ListenableState to bind with a ChangeNotifier or ValueNotifier.
+class _HomePageState extends ListenableState<HomePage, HomePageModel> {
+  @override
+  Widget build(BuildContext context) {
+    return Text('Welcome ${listenable.name} ${listenable.surname}');
+  }
+}
+
+/// Example model implementing ChangeNotifier.
+class HomePageModel extends ChangeNotifier {
+  String _name = 'John';
+  String _surname = 'Wick';
+
+  String get name => _name;
+  String get surname => _surname;
+
+  void update(String name, String surname) {
+    _name = name;
+    _surname = surname;
+    notifyListeners();
+  }
+}
 ```
 
 # Known Limitation

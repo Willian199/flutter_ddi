@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:example/exception/interceptor_blocked.dart';
 import 'package:example/model/detail.dart';
 import 'package:example/page/details_screen.dart';
 import 'package:example/page/first_screen.dart';
@@ -59,11 +60,11 @@ class AppModule extends FlutterDDIRouter {
       ];
 }
 
-class Luck extends FlutterDDIInterceptor {
+class Luck extends DDIInterceptor<FlutterDDIModuleDefine> {
   late final Random random = Random();
 
   @override
-  Future<InterceptorResult> onEnter(FlutterDDIModuleDefine instance) async {
+  Future<FlutterDDIModuleDefine> onCreate(FlutterDDIModuleDefine instance) async {
     final r = random.nextInt(10) + 1;
     if (r % 2 != 0) {
       ScaffoldMessenger.of(instance.context).showSnackBar(
@@ -73,18 +74,12 @@ class Luck extends FlutterDDIInterceptor {
         ),
       );
 
-      return InterceptorResult.redirect;
+      Navigator.of(instance.context).pop();
+
+      throw const InterceptorBlockedException('stop');
     }
 
-    return InterceptorResult.next;
-  }
-
-  @override
-  FutureOr<void> onFail(FlutterDDIModuleDefine instance) {}
-
-  @override
-  FutureOr<void> redirect(BuildContext context) {
-    Navigator.of(context).popUntil(ModalRoute.withName('/'));
+    return instance;
   }
 }
 
@@ -113,7 +108,7 @@ class DetailsModule extends FlutterDDIModuleRouter {
   String get path => '/details';
 
   @override
-  WidgetBuilder get page => (_) => DetailsScreen();
+  WidgetBuilder get page => (_) => const DetailsScreen();
 
   @override
   List<ModuleInterceptor> get interceptors => [
