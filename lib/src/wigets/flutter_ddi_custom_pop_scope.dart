@@ -17,8 +17,9 @@ class CustomPopScope extends StatelessWidget {
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (pop, result) async {
-        //final navigator = Navigator.of(context);
-        if (pop && !ddi.isRegistered(qualifier: moduleQualifier)) {
+        final navigator = Navigator.of(context);
+        if (!navigator.canPop() ||
+            pop && !ddi.isRegistered(qualifier: moduleQualifier)) {
           return;
         }
 
@@ -28,7 +29,7 @@ class CustomPopScope extends StatelessWidget {
           onPopInvoked(true);
 
           if (context.mounted && !pop) {
-            Navigator.pop(context, result);
+            navigator.pop(result);
           }
         } catch (e) {
           /// Ignore catch

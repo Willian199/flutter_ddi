@@ -6,7 +6,7 @@ import 'package:flutter_ddi/flutter_ddi.dart';
 final class ModuleInterceptor<InterceptorT extends DDIInterceptor> {
   /// Use to register a new Interceptor.
   factory ModuleInterceptor.of({
-    required ScopeFactory<InterceptorT> factory,
+    required DDIBaseFactory<InterceptorT> factory,
     Object? qualifier,
     FutureOr<bool> Function()? canRegister,
   }) {
@@ -35,7 +35,7 @@ final class ModuleInterceptor<InterceptorT extends DDIInterceptor> {
 
   /// The type of the Interceptor.
   final Object qualifier;
-  final ScopeFactory<InterceptorT>? factory;
+  final DDIBaseFactory<InterceptorT>? factory;
   final FutureOr<bool> Function()? canRegister;
   final bool isFactory;
 

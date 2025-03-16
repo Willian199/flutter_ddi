@@ -6,7 +6,8 @@ import 'package:flutter_ddi/src/wigets/flutter_ddi_custom_pop_scope.dart';
 
 /// Widget that loads a module with dependency injection.
 /// This widget is used to load a module's page with its dependencies resolved.
-class FlutterDDIRouterLoader<ModuleT extends FlutterDDIModuleDefine> extends StatefulWidget {
+class FlutterDDIRouterLoader<ModuleT extends FlutterDDIModuleDefine>
+    extends StatefulWidget {
   /// The `module` parameter is the module to be loaded.
   const FlutterDDIRouterLoader({
     required this.module,
@@ -46,7 +47,8 @@ class _FlutterDDIRouterLoaderState extends State<FlutterDDIRouterLoader> {
 
   Future<void> initialize() async {
     try {
-      final List<Object> interceptorsQualifiers = await Future.wait(_module.interceptors.map((e) => e.register()));
+      final List<Object> interceptorsQualifiers =
+          await Future.wait(_module.interceptors.map((e) => e.register()));
 
       _module.context = context;
 
@@ -94,14 +96,16 @@ class _FlutterDDIRouterLoaderState extends State<FlutterDDIRouterLoader> {
         builder: (context, snapshot) {
           return switch ((snapshot.hasError, snapshot.connectionState)) {
             (true, _) => _error ??
-                ddi.getOptionalWith<ErrorModuleInterface, AsyncSnapshot>(parameter: snapshot) ??
+                ddi.getOptionalWith<ErrorModuleInterface, AsyncSnapshot>(
+                    parameter: snapshot) ??
                 Scaffold(
                   backgroundColor: Colors.red,
                   body: Center(
                     child: Text(snapshot.error.toString()),
                   ),
                 ),
-            (false, ConnectionState.done) => _cachedWidget ??= widget.module.page(context),
+            (false, ConnectionState.done) => _cachedWidget ??=
+                widget.module.page(context),
             _ => _loading ??
                 ddi.getOptional<LoaderModuleInterface>() ??
                 const Center(

@@ -64,7 +64,8 @@ class Luck extends DDIInterceptor<FlutterDDIModuleDefine> {
   late final Random random = Random();
 
   @override
-  Future<FlutterDDIModuleDefine> onCreate(FlutterDDIModuleDefine instance) async {
+  Future<FlutterDDIModuleDefine> onCreate(
+      FlutterDDIModuleDefine instance) async {
     final r = random.nextInt(10) + 1;
     if (r % 2 != 0) {
       ScaffoldMessenger.of(instance.context).showSnackBar(
