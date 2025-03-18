@@ -16,13 +16,13 @@ class FirstScreen extends StatelessWidget {
             const Text('First Screen'),
             ElevatedButton(
               onPressed: () {
-                Navigator.of(context).pushNamed('/first/details');
+                Navigator.of(context).pushNamed('/details');
               },
               child: const Text('Go to Details Screen'),
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.of(context, rootNavigator: true).pop();
               },
               child: const Text('Go Back'),
             ),

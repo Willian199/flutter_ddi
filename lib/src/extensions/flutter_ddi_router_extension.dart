@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_ddi/flutter_ddi.dart';
 import 'package:flutter_ddi/src/wigets/flutter_ddi_module_loader.dart';
+import 'package:flutter_ddi/src/wigets/flutter_ddi_oulet_loader.dart';
 
 /// Class responsible for generating routes from modules.
 /// This class generates routes based on modules for the Flutter app.
@@ -17,6 +18,10 @@ extension FlutterDDIRouterExtension on FlutterDDIRouter {
     return Map.fromEntries(_buildModules(this).entries);
   }
 
+  Map<String, WidgetBuilder> getModules() {
+    return Map.fromEntries(modules.expand((sub) => _buildModules(sub).entries));
+  }
+
   static Map<String, WidgetBuilder>
       _buildModules<T extends FlutterDDIModuleDefine>(T module,
           [String? extraPath]) {
@@ -30,6 +35,9 @@ extension FlutterDDIRouterExtension on FlutterDDIRouter {
     path = path.replaceAll('//', '/');
 
     return switch (module) {
+      final FlutterDDIOutletModule m => {
+          path: (_) => FlutterDDIOutletLoader(module: m),
+        },
       final FlutterDDIRouter m => {
           path: (_) => FlutterDDIRouterLoader(module: m),
           ...Map.fromEntries(

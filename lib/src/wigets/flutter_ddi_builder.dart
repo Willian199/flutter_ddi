@@ -58,7 +58,7 @@ class _FlutterDDIBuilderState<BeanT extends Object>
 
   Future<void> initialize() async {
     try {
-      await ddi.registerSingleton<BeanT>(
+      await ddi.singleton<BeanT>(
         widget.module as BeanT Function(),
         qualifier: widget.moduleName,
       );

@@ -6,10 +6,10 @@ import 'package:flutter_ddi/src/wigets/flutter_ddi_custom_pop_scope.dart';
 
 /// Widget that loads a module with dependency injection.
 /// This widget is used to load a module's page with its dependencies resolved.
-class FlutterDDIRouterLoader<ModuleT extends FlutterDDIModuleDefine>
+class FlutterDDIOutletLoader<ModuleT extends FlutterDDIOutletModule>
     extends StatefulWidget {
   /// The `module` parameter is the module to be loaded.
-  const FlutterDDIRouterLoader({
+  const FlutterDDIOutletLoader({
     required this.module,
     super.key,
   });
@@ -18,28 +18,28 @@ class FlutterDDIRouterLoader<ModuleT extends FlutterDDIModuleDefine>
   final ModuleT module;
 
   @override
-  State<FlutterDDIRouterLoader> createState() => _FlutterDDIRouterLoaderState();
+  State<FlutterDDIOutletLoader> createState() => _FlutterDDIOutletLoaderState();
 }
 
-class _FlutterDDIRouterLoaderState extends State<FlutterDDIRouterLoader> {
-  _FlutterDDIRouterLoaderState();
+class _FlutterDDIOutletLoaderState extends State<FlutterDDIOutletLoader> {
+  _FlutterDDIOutletLoaderState();
   late final Completer _completer = Completer();
   bool isDestroyed = false;
   Widget? _cachedWidget;
 
-  late final FlutterDDIModuleDefine _module = widget.module;
+  late final FlutterDDIOutletModule _module = widget.module;
 
   late final Object moduleQualifier = _module.moduleQualifier;
 
   Widget? _error;
   Widget? _loading;
 
+  late final Map<String, Widget Function(BuildContext)> _routes;
+
   @override
   void initState() {
-    if (_module is FlutterDDIRouter) {
-      _error = _module.error;
-      _loading = _module.loading;
-    }
+    _error = _module.error;
+    _loading = _module.loading;
 
     WidgetsBinding.instance.addPostFrameCallback((_) => initialize());
     super.initState();
@@ -52,11 +52,13 @@ class _FlutterDDIRouterLoaderState extends State<FlutterDDIRouterLoader> {
 
       _module.context = context;
 
-      await ddi.object<FlutterDDIModuleDefine>(
+      await ddi.object<FlutterDDIOutletModule>(
         _module,
         qualifier: moduleQualifier,
         interceptors: interceptorsQualifiers.toSet(),
       );
+
+      _routes = _module.getModules();
 
       _completer.complete();
     } catch (e) {
@@ -71,7 +73,7 @@ class _FlutterDDIRouterLoaderState extends State<FlutterDDIRouterLoader> {
     // Destroy the registered module when the widget is disposed
     // If you don't provide a `moduleQualifier`, the module will be destroyed with its default qualifier
     if (!isDestroyed) {
-      await ddi.destroy<FlutterDDIModuleDefine>(
+      await ddi.destroy<FlutterDDIOutletModule>(
         qualifier: moduleQualifier,
       );
 
@@ -104,8 +106,28 @@ class _FlutterDDIRouterLoaderState extends State<FlutterDDIRouterLoader> {
                     child: Text(snapshot.error.toString()),
                   ),
                 ),
-            (false, ConnectionState.done) => _cachedWidget ??=
-                widget.module.page(context),
+            (false, ConnectionState.done) => _cachedWidget ??= Navigator(
+                key: _module.navigatorKey,
+                initialRoute: _module.path,
+                onGenerateRoute: (settings) {
+                  if ([_module.path, '/'].contains(settings.name)) {
+                    return MaterialPageRoute(
+                      builder: (context) => _module.page(context),
+                      settings: settings,
+                    );
+                  }
+
+                  final builder = _routes[settings.name];
+
+                  if (builder != null) {
+                    return MaterialPageRoute(
+                      builder: builder,
+                      settings: settings,
+                    );
+                  }
+                  return null;
+                },
+              ),
             _ => _loading ??
                 ddi.getOptional<LoaderModuleInterface>() ??
                 const Center(

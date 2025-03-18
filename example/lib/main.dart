@@ -37,7 +37,6 @@ class MyApp extends StatelessWidget {
       /// {
       ///   '/': (_) => HomeScreen(),
       ///   '/first': (_) => FirstScreen(),
-      ///   '/first/details': (_) => DetailsScreen(),
       ///   '/second': (_) => SecondScreen(),
       /// }
       routes: appModule.getRoutes(),
@@ -85,7 +84,7 @@ class Luck extends DDIInterceptor<FlutterDDIModuleDefine> {
 }
 
 // First Submodule
-class FirstSubModule extends FlutterDDIRouter {
+class FirstSubModule extends FlutterDDIOutletModule {
   @override
   String get path => '/first';
 
@@ -94,7 +93,8 @@ class FirstSubModule extends FlutterDDIRouter {
 
   @override
   List<ModuleInterceptor> get interceptors => [
-        ModuleInterceptor.of(factory: Luck.new.builder.asApplication()),
+        ModuleInterceptor<Luck>.of(
+            factory: ApplicationFactory<Luck>(builder: Luck.new.builder)),
       ];
 
   @override
@@ -118,7 +118,7 @@ class DetailsModule extends FlutterDDIModuleRouter {
 
   @override
   void onPostConstruct() {
-    registerSingleton(() => Detail(message: 'Details Module Loaded'));
+    singleton(() => Detail(message: 'Details Router Outlet Module Loaded'));
   }
 }
 
@@ -128,15 +128,19 @@ class SecondSubModule extends FlutterDDIModuleRouter {
   String get path => '/second';
 
   @override
-  WidgetBuilder get page => (_) => const SecondScreen();
+  WidgetBuilder get page => (_) => DDI.instance.runInZone('second_page', () {
+        ddi.object('Zoned Module Loaded', qualifier: 'second_sub');
+        return SecondScreen();
+      });
 
   @override
   List<ModuleInterceptor> get interceptors => [
-        ModuleInterceptor.of(factory: Luck.new.builder.asApplication()),
+        ModuleInterceptor<Luck>.of(
+            factory: ApplicationFactory<Luck>(builder: Luck.new.builder)),
       ];
 
   @override
   FutureOr<void> onPostConstruct() {
-    registerObject('Second Sub Module Loaded', qualifier: 'second_sub');
+    object('Second Sub Module Loaded', qualifier: 'second_sub');
   }
 }

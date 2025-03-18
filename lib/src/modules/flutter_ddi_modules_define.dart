@@ -105,3 +105,17 @@ abstract class FlutterDDIRouter extends FlutterDDIModuleDefine {
     Navigator.of(context).pop();
   }
 }
+
+/// Abstract class to implement a Router Outlet pattern.
+abstract class FlutterDDIOutletModule extends FlutterDDIRouter {
+  /// The navigator key for the outlet.
+  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
+  /// Navigate to a specific route in the outlet.
+  Future<T?> navigateTo<T extends Object?>(String routeName,
+      {Object? arguments}) {
+    return navigatorKey.currentState
+            ?.pushNamed<T>(routeName, arguments: arguments) ??
+        Future.value();
+  }
+}
