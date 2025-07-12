@@ -15,7 +15,6 @@ class MockTestService {
 
 /// Mock module for testing FlutterDDIBuilder
 class MockTestModule {
-
   MockTestModule({this.name = 'default'});
   final String name;
 
@@ -183,9 +182,9 @@ class MockContextExtensionWidget extends StatelessWidget {
 
 /// Mock widget for testing FlutterDDIBuilder
 class MockDDIBuilderWidget extends StatelessWidget {
-
   const MockDDIBuilderWidget({
-    required this.moduleFactory, super.key,
+    required this.moduleFactory,
+    super.key,
     this.moduleName,
     this.error,
     this.loading,
