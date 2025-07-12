@@ -1,7 +1,15 @@
 import 'package:flutter/widgets.dart';
 
-/// Use this interface to create a default widget to show when a module fails.
+/// Interface for creating custom error widgets to display when a module fails to load.
+///
+/// Implement this interface to provide custom error handling for your modules.
+/// The [snapshot] parameter contains the error information from the failed operation.
 abstract class ErrorModuleInterface extends StatelessWidget {
+  /// Creates an ErrorModuleInterface with the given snapshot.
+  ///
+  /// [snapshot] - The AsyncSnapshot containing error information.
   const ErrorModuleInterface(this.snapshot);
+
+  /// The snapshot containing error information from the failed operation.
   final AsyncSnapshot snapshot;
 }

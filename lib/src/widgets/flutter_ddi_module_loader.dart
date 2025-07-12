@@ -2,13 +2,15 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_ddi/flutter_ddi.dart';
-import 'package:flutter_ddi/src/wigets/flutter_ddi_custom_pop_scope.dart';
+import 'package:flutter_ddi/src/widgets/flutter_ddi_custom_pop_scope.dart';
 
 /// Widget that loads a module with dependency injection.
 /// This widget is used to load a module's page with its dependencies resolved.
 class FlutterDDIRouterLoader<ModuleT extends FlutterDDIModuleDefine>
     extends StatefulWidget {
-  /// The `module` parameter is the module to be loaded.
+  /// Creates a FlutterDDIRouterLoader widget.
+  ///
+  /// [module] - The module to be loaded.
   const FlutterDDIRouterLoader({
     required this.module,
     super.key,
