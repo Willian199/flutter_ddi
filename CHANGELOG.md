@@ -1,7 +1,11 @@
+## 0.9.0
+* Bumpped `dart_ddi` to 0.12.0.
+* Revised how `Interceptors` works with Flutter Modules
+
 ## 0.8.0
 * Bumpped `dart_ddi` to 0.11.0.
-* Now the State management works with `Listenable` interface, like `ChangeNotifier` or `ValueNotifier`. This makes the package have a better integration with Flutter.
 * Added `ListenableState` and `ListenableMixin`. Reduce the boilerplate code when using `Listenable`, `ChangeNotifier` or `ValueNotifier`.
+* Now the State management works with `Listenable` interface, like `ChangeNotifier` or `ValueNotifier`. This makes the package have a better integration with Flutter.
 
 ** Breaking Changes **
 * Removed `EventListener` and `StreamListener` mixins.

@@ -8,7 +8,7 @@ class SecondScreen extends StatelessWidget {
 
   // This zoned info only works here, because at this point, the constructor is running in a Zone.
   // But after the constructor is finished, the Zone will be closed.
-  // So, currently, this is not recommended to use.
+  // So, this is not recommended to use.
   final String message;
 
   @override
