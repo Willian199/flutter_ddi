@@ -2,12 +2,15 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_ddi/flutter_ddi.dart';
-import 'package:flutter_ddi/src/wigets/flutter_ddi_custom_pop_scope.dart';
+import 'package:flutter_ddi/src/widgets/flutter_ddi_custom_pop_scope.dart';
 
 /// Widget that loads a module with dependency injection.
 /// This widget is used to load a module's page with its dependencies resolved.
-class FlutterDDIRouterLoader<ModuleT extends FlutterDDIModuleDefine> extends StatefulWidget {
-  /// The `module` parameter is the module to be loaded.
+class FlutterDDIRouterLoader<ModuleT extends FlutterDDIModuleDefine>
+    extends StatefulWidget {
+  /// Creates a FlutterDDIRouterLoader widget.
+  ///
+  /// [module] - The module to be loaded.
   const FlutterDDIRouterLoader({
     required this.module,
     super.key,
@@ -46,11 +49,12 @@ class _FlutterDDIRouterLoaderState extends State<FlutterDDIRouterLoader> {
 
   Future<void> initialize() async {
     try {
-      final List<Object> interceptorsQualifiers = await Future.wait(_module.interceptors.map((e) => e.register()));
+      final List<Object> interceptorsQualifiers =
+          await Future.wait(_module.interceptors.map((e) => e.register()));
 
       _module.context = context;
 
-      await ddi.registerObject<FlutterDDIModuleDefine>(
+      await ddi.object<FlutterDDIModuleDefine>(
         _module,
         qualifier: moduleQualifier,
         interceptors: interceptorsQualifiers.toSet(),
@@ -94,14 +98,16 @@ class _FlutterDDIRouterLoaderState extends State<FlutterDDIRouterLoader> {
         builder: (context, snapshot) {
           return switch ((snapshot.hasError, snapshot.connectionState)) {
             (true, _) => _error ??
-                ddi.getOptionalWith<ErrorModuleInterface, AsyncSnapshot>(parameter: snapshot) ??
+                ddi.getOptionalWith<ErrorModuleInterface, AsyncSnapshot>(
+                    parameter: snapshot) ??
                 Scaffold(
                   backgroundColor: Colors.red,
                   body: Center(
                     child: Text(snapshot.error.toString()),
                   ),
                 ),
-            (false, ConnectionState.done) => _cachedWidget ??= widget.module.page(context),
+            (false, ConnectionState.done) => _cachedWidget ??=
+                widget.module.page(context),
             _ => _loading ??
                 ddi.getOptional<LoaderModuleInterface>() ??
                 const Center(

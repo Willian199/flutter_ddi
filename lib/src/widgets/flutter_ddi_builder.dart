@@ -4,7 +4,7 @@ import 'package:dart_ddi/dart_ddi.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ddi/src/interfaces/error_module_interface.dart';
 import 'package:flutter_ddi/src/interfaces/loader_module_interface.dart';
-import 'package:flutter_ddi/src/wigets/flutter_ddi_custom_pop_scope.dart';
+import 'package:flutter_ddi/src/widgets/flutter_ddi_custom_pop_scope.dart';
 
 /// Widget that handles dependency injection.
 /// This widget is used to wrap a child widget and register its module with DDI.
@@ -51,14 +51,19 @@ class _FlutterDDIBuilderState<BeanT extends Object>
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) => initialize());
+    // Use microtask to defer initialization until after the current frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        initialize();
+      }
+    });
 
     super.initState();
   }
 
   Future<void> initialize() async {
     try {
-      await ddi.registerSingleton<BeanT>(
+      await ddi.singleton<BeanT>(
         widget.module as BeanT Function(),
         qualifier: widget.moduleName,
       );
@@ -66,7 +71,6 @@ class _FlutterDDIBuilderState<BeanT extends Object>
       completer.complete();
     } catch (e) {
       completer.completeError(e);
-      rethrow;
     }
   }
 
