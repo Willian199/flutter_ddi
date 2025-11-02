@@ -70,8 +70,7 @@ void main() {
 
     testWidgets('should work with PostConstruct in widget tree',
         (WidgetTester tester) async {
-      await ddi
-          .widget<MockPostConstructWidget2>(MockPostConstructWidget2.new);
+      await ddi.widget<MockPostConstructWidget2>(MockPostConstructWidget2.new);
 
       await tester.pumpWidget(
         MaterialApp(
@@ -92,4 +91,3 @@ void main() {
     });
   });
 }
-
