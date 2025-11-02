@@ -208,6 +208,244 @@ class HomePageModel extends ChangeNotifier {
 }
 ```
 
+### FlutterDDIListen Extension
+
+The `FlutterDDIListen` extension provides a convenient way to make any widget reactive to `Listenable` changes. It wraps the widget with a listener that automatically rebuilds whenever the specified `Listenable` object notifies its listeners.
+
+### How It Works
+
+The `.listen()` extension method can be called on any widget and optionally accepts a `Listenable` instance. If no instance is provided, it will automatically retrieve one from the DDI container using the generic type parameter.
+
+### Characteristics
+
+- **DDI integration** - Can automatically retrieve `Listenable` instances from the DDI container
+- **Simple syntax** - Clean and readable code with minimal boilerplate
+
+### Usage Example
+
+```dart
+// Register a ChangeNotifier in DDI
+class CounterModel extends ChangeNotifier {
+  int _count = 0;
+  int get count => _count;
+  
+  void increment() {
+    _count++;
+    notifyListeners();
+  }
+}
+
+// Register in DDI
+ddi.singleton<CounterModel>(CounterModel.new);
+
+// Use in widget tree
+class CounterWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    // Automatically retrieves CounterModel from DDI
+    return Text('Count: ${ddi.get<CounterModel>().count}')
+        .listen<CounterModel>();
+    
+    // Or pass instance explicitly
+    final counter = ddi.get<CounterModel>();
+    return Text('Count: ${counter.count}').listen(counter);
+  }
+}
+```
+
+## Command and Effect Pattern
+
+The `Command` and `Effect` classes provide a lightweight one-way communication channel based on actions and effects. This pattern allows creating a **unique link** between who triggers an action (`TAction`) and who produces an effect (`TEffect`).
+
+### Concept
+
+- **Executor (handler)**: Registers the function that processes the action via `on()`
+- **Emitter**: Triggers the execution via `execute()` and receives the result of the effect returned by the handler
+
+### Features
+
+- Supports synchronous or asynchronous execution (`FutureOr<TEffect?>`)
+- Allows redefining or clearing the handler with `clear()`
+- Generic types allow reuse for any action and effect
+- Semantic aliases: `Command` (for emitters) and `Effect` (for executors)
+
+### Usage Example
+
+```dart
+// Definition of a command with return effect
+final Command<String, int> lengthCommand = Command();
+
+// Executor registers the command behavior
+lengthCommand.on((input) {
+  if (input == null) return 0;
+  return input.length;
+});
+
+// Emitter triggers execution and receives effect
+final result = lengthCommand.execute('Hello');
+print(result); // 5
+
+// Clears the handler, if necessary
+lengthCommand.clear();
+```
+
+### Notes
+
+- If the handler is not registered before execution, `execute()` throws an `AssertionError`
+- `TAction` is optional (`null`) in the current implementation
+- Only one handler can be registered per command/effect link
+
+## ReactiveCommand and ReactiveEffect Pattern
+
+The `ReactiveCommand` and `ReactiveEffect` classes are reactive variations of `Command` and `Effect` that combine the command/effect pattern with Flutter's reactive system using `ValueNotifier`.
+
+### Concept
+
+- **Executor (handler)**: Registers the function that processes the action via `on()`
+- **Emitter**: Triggers the execution via `execute()` and notifies listeners automatically
+- **Observers**: Can listen to effect changes via `addListener()` or use Flutter widgets that listen to `ValueNotifier`
+
+### Features
+
+- Supports synchronous or asynchronous execution (`FutureOr<TEffect?>`)
+- Automatically notifies listeners when effects change
+- Extends `ValueNotifier`, making it compatible with Flutter's reactive system
+- Can be used with widgets like `ValueListenableBuilder` or the `.listen()` extension
+- Allows redefining or clearing the handler with `clear()`
+- Semantic aliases: `ReactiveCommand` (for emitters) and `ReactiveEffect` (for executors)
+
+### Usage Example
+
+```dart
+// Definition of a reactive command
+final ReactiveCommand<String, int> lengthCommand = ReactiveCommand();
+
+// Executor registers the command behavior
+lengthCommand.on((input) {
+  if (input == null) return 0;
+  return input.length;
+});
+
+// Listen to changes in the effect
+lengthCommand.addListener(() {
+  print('New effect: ${lengthCommand.value}');
+});
+
+// Emitter triggers execution (automatically notifies listeners)
+await lengthCommand.execute('Hello');
+// Prints: "New effect: 5"
+
+// Access current effect value
+print(lengthCommand.value); // 5
+```
+
+### Usage with Flutter Widgets
+
+```dart
+// In a widget using ValueListenableBuilder
+ValueListenableBuilder<int?>(
+  valueListenable: lengthCommand,
+  builder: (context, value, child) {
+    return Text('Length: ${value ?? 0}');
+  },
+)
+
+// Or using the listen extension
+Text('Length: ${lengthCommand.value ?? 0}').listen(lengthCommand);
+```
+
+### Notes
+
+- If the handler is not registered before execution, `execute()` throws an `AssertionError`
+- The initial value is `null` until the first execution
+- When asynchronous handlers are used, listeners are notified after the `Future` completes
+- Disposing this command will also dispose the internal `ValueNotifier`
+
+## Widget Scope
+
+The Widget Scope is a specialized scope designed specifically for Flutter Widgets. It creates a new instance every time it is requested, making it ideal for Widgets that need clean instances on each build.
+
+### Characteristics
+
+- **Creates a new instance every time it is requested** - Each `get` call returns a fresh instance
+- **Does not support Interceptors** - Interceptors are not applied to Widget Scope instances
+- **Does not support Decorators** - Decorators cannot be used with Widget Scope
+- **Does not support Children (child modules)** - Child module relationships are not supported
+- **Supports PostConstruct** - PostConstruct lifecycle hook is supported for initialization after creation
+- **Does not support PreDispose or PreDestroy** - Since instances are not cached, disposal hooks are not needed
+
+**Note:** This scope does not maintain state, so instances are created and discarded automatically. Since instances are not cached, there is no need to dispose of them.
+
+### Registration Methods
+
+#### Using `asWidget()` Extension
+
+The `asWidget()` extension method is available on `CustomBuilder` for easy registration:
+
+```dart
+MyWidget.new.builder.asWidget();
+
+// OR
+
+MyWidget.new.builder.asWidget(
+  qualifier: 'myWidget',
+  canDestroy: true,
+  canRegister: () => true,
+  selector: (qualifier) => qualifier == 'myWidget',
+);
+```
+
+#### Using `widget()` Extension
+
+The `widget()` extension method is available on `DDI` for direct registration:
+
+```dart
+ddi.widget<MyWidget>(
+  MyWidget.new,
+  qualifier: 'myWidget',
+  canDestroy: true,
+);
+```
+
+#### Direct Factory Registration
+
+You can also register directly using the `WidgetFactory`:
+
+```dart
+await ddi.register<MyWidget>(
+  factory: WidgetFactory<MyWidget>(
+    builder: MyWidget.new.builder,
+    canDestroy: true,
+  ),
+  qualifier: 'myWidget',
+);
+```
+
+### Usage Example
+
+```dart
+// Register a Widget with Widget Scope
+MyCustomWidget.new.builder.asWidget();
+
+// Use in Widget tree
+class ParentWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    // Each call to get() creates a new instance
+    final widget1 = ddi.get<MyCustomWidget>();
+    final widget2 = ddi.get<MyCustomWidget>();
+    
+    // widget1 and widget2 are different instances
+    return Column(
+      children: [
+        widget1,
+        widget2,
+      ],
+    );
+  }
+}
+```
+
 # Known Limitation
 
 `Circular Routes:` At present, the package does not fully support circular route structures. Defining circular dependencies between routes will lead to errors during the module registration process.

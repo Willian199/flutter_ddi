@@ -128,10 +128,7 @@ class SecondSubModule extends FlutterDDIModuleRouter {
   String get path => '/second';
 
   @override
-  WidgetBuilder get page => (_) => DDI.instance.runInZone('second_page', () {
-        ddi.object('Zoned Module Loaded', qualifier: 'second_sub');
-        return SecondScreen();
-      });
+  WidgetBuilder get page => (_) => SecondScreen();
 
   @override
   List<ModuleInterceptor> get interceptors => [

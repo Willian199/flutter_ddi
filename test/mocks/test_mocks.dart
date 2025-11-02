@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:flutter/material.dart';
 import 'package:flutter_ddi/flutter_ddi.dart';
 
@@ -222,4 +224,134 @@ class CustomErrorLoadingRouter extends FlutterDDIRouter {
 
   @override
   Widget? get loading => const Text('Custom Loading');
+}
+
+/// Mock Widget for testing Widget Scope
+class MockTestWidget extends StatelessWidget {
+  const MockTestWidget({super.key, this.name, this.value});
+  final String? name;
+  final int? value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text('MockWidget: ${name ?? 'default'} - ${value ?? 0}');
+  }
+}
+
+/// Mock Widget with PostConstruct that works properly
+class MockPostConstructWidget2 extends StatelessWidget with PostConstruct {
+  MockPostConstructWidget2({super.key});
+  bool _initialized = false;
+  bool get initialized => _initialized;
+
+  @override
+  void onPostConstruct() {
+    _initialized = true;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Text('Initialized: $_initialized');
+  }
+}
+
+class MockPostConstructCount extends StatelessWidget with PostConstruct {
+  MockPostConstructCount({super.key});
+  bool _initialized = false;
+  bool get initialized => _initialized;
+  int contador = 0;
+
+  @override
+  void onPostConstruct() {
+    _initialized = true;
+    contador++;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Text('Initialized: $_initialized');
+  }
+}
+
+/// Mock Widget with constructor parameter
+class MockParamWidget extends StatelessWidget {
+  const MockParamWidget({required this.message, super.key});
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(message);
+  }
+}
+
+/// Mock Widget that implements DDIModule
+// Note: StatelessWidget is immutable, so we can't test moduleQualifier properly
+// This is a limitation - DDIModule should be used with regular classes, not Widgets
+class MockModuleWidget extends StatelessWidget {
+  const MockModuleWidget({super.key, this.qualifier});
+  final Object? qualifier;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text('Module: ${qualifier ?? MockModuleWidget}');
+  }
+}
+
+/// Mock Widget for testing canDestroy: false scenarios (Direct Registration)
+class MockIndestructibleWidget extends StatelessWidget {
+  const MockIndestructibleWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Text('Indestructible Widget');
+  }
+}
+
+/// Mock Widget for testing canDestroy: false scenarios (asWidget extension)
+class MockIndestructibleWidget2 extends StatelessWidget {
+  const MockIndestructibleWidget2({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Text('Indestructible Widget 2');
+  }
+}
+
+/// Mock Widget for testing canDestroy: false scenarios (widget extension)
+class MockIndestructibleWidget3 extends StatelessWidget {
+  const MockIndestructibleWidget3({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Text('Indestructible Widget 3');
+  }
+}
+
+/// Mock Widget with PostConstruct for testing canDestroy: false
+class MockIndestructiblePostConstructWidget extends StatelessWidget
+    with PostConstruct {
+  MockIndestructiblePostConstructWidget({super.key});
+  bool _initialized = false;
+  bool get initialized => _initialized;
+
+  @override
+  void onPostConstruct() {
+    _initialized = true;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Text('Indestructible Initialized: $_initialized');
+  }
+}
+
+/// Mock Widget with parameter for testing canDestroy: false
+class MockIndestructibleParamWidget extends StatelessWidget {
+  const MockIndestructibleParamWidget({required this.message, super.key});
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text('Indestructible: $message');
+  }
 }
