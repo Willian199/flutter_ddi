@@ -208,6 +208,91 @@ class HomePageModel extends ChangeNotifier {
 }
 ```
 
+## Widget Scope
+
+The Widget Scope is a specialized scope designed specifically for Flutter Widgets. It creates a new instance every time it is requested, making it ideal for Widgets that need clean instances on each build.
+
+### Characteristics
+
+- **Creates a new instance every time it is requested** - Each `get` call returns a fresh instance
+- **Does not support Interceptors** - Interceptors are not applied to Widget Scope instances
+- **Does not support Decorators** - Decorators cannot be used with Widget Scope
+- **Does not support Children (child modules)** - Child module relationships are not supported
+- **Supports PostConstruct** - PostConstruct lifecycle hook is supported for initialization after creation
+- **Does not support PreDispose or PreDestroy** - Since instances are not cached, disposal hooks are not needed
+
+**Note:** This scope does not maintain state, so instances are created and discarded automatically. Since instances are not cached, there is no need to dispose of them.
+
+### Registration Methods
+
+#### Using `asWidget()` Extension
+
+The `asWidget()` extension method is available on `CustomBuilder` for easy registration:
+
+```dart
+MyWidget.new.builder.asWidget();
+
+// OR
+
+MyWidget.new.builder.asWidget(
+  qualifier: 'myWidget',
+  canDestroy: true,
+  canRegister: () => true,
+  selector: (qualifier) => qualifier == 'myWidget',
+);
+```
+
+#### Using `widget()` Extension
+
+The `widget()` extension method is available on `DDI` for direct registration:
+
+```dart
+ddi.widget<MyWidget>(
+  MyWidget.new,
+  qualifier: 'myWidget',
+  canDestroy: true,
+);
+```
+
+#### Direct Factory Registration
+
+You can also register directly using the `WidgetFactory`:
+
+```dart
+await ddi.register<MyWidget>(
+  factory: WidgetFactory<MyWidget>(
+    builder: MyWidget.new.builder,
+    canDestroy: true,
+  ),
+  qualifier: 'myWidget',
+);
+```
+
+### Usage Example
+
+```dart
+// Register a Widget with Widget Scope
+MyCustomWidget.new.builder.asWidget();
+
+// Use in Widget tree
+class ParentWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    // Each call to get() creates a new instance
+    final widget1 = ddi.get<MyCustomWidget>();
+    final widget2 = ddi.get<MyCustomWidget>();
+    
+    // widget1 and widget2 are different instances
+    return Column(
+      children: [
+        widget1,
+        widget2,
+      ],
+    );
+  }
+}
+```
+
 # Known Limitation
 
 `Circular Routes:` At present, the package does not fully support circular route structures. Defining circular dependencies between routes will lead to errors during the module registration process.
