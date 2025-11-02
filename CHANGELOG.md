@@ -1,3 +1,11 @@
+## 0.10.0
+* Added Widget Scope support - A specialized scope for Widgets that creates a new instance every time it is requested
+* Added `asWidget()` extension method for `CustomBuilder` to register Widget Scope instances
+* Added `widget()` extension method for `DDI` to register Widget Scope instances directly
+* Added `FlutterDDIListen` extension - A convenient way to make any widget reactive to `Listenable` changes
+* Added `Command` and `Effect` pattern - Lightweight one-way communication channel based on actions and effects
+* Added `ReactiveCommand` and `ReactiveEffect` - Reactive variations that integrate with Flutter's `ValueNotifier` system
+
 ## 0.9.0
 * Bumpped `dart_ddi` to 0.12.0.
 * Revised how `Interceptors` works with Flutter Modules
