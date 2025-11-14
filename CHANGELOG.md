@@ -1,3 +1,7 @@
+## 0.11.0
+* Bumped `dart_ddi` to 0.14.0
+* The WidgetFactory implementation has been migrated to the new `dart_ddi` interfaces.
+
 ## 0.10.0
 * Added Widget Scope support - A specialized scope for Widgets that creates a new instance every time it is requested
 * Added `asWidget()` extension method for `CustomBuilder` to register Widget Scope instances
