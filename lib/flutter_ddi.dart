@@ -17,4 +17,4 @@ export 'src/interfaces/loader_module_interface.dart';
 export 'src/modules/flutter_ddi_modules_define.dart';
 export 'src/widgets/flutter_ddi_builder.dart';
 export 'src/widgets/flutter_ddi_module_loader.dart';
-export 'src/widgets/flutter_ddi_oulet_loader.dart';
+export 'src/widgets/flutter_ddi_outlet_loader.dart';

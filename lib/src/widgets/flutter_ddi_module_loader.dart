@@ -38,13 +38,18 @@ class _FlutterDDIRouterLoaderState extends State<FlutterDDIRouterLoader> {
 
   @override
   void initState() {
+    super.initState();
     if (_module is FlutterDDIRouter) {
       _error = _module.error;
       _loading = _module.loading;
     }
 
-    WidgetsBinding.instance.addPostFrameCallback((_) => initialize());
-    super.initState();
+    Future.microtask(initialize);
+
+    _loading ??= ddi.getOptional<LoaderModuleInterface>() ??
+        const Center(
+          child: CircularProgressIndicator(),
+        );
   }
 
   Future<void> initialize() async {
@@ -76,44 +81,44 @@ class _FlutterDDIRouterLoaderState extends State<FlutterDDIRouterLoader> {
       await ddi.destroy<FlutterDDIModuleDefine>(
         qualifier: moduleQualifier,
       );
-
       await Future.wait(_module.interceptors.map((e) => e.destroy()));
     }
 
     _cachedWidget = null;
   }
 
-  void onPop(bool isDestroyed) {
+  Future<void> onPop(bool isDestroyed) async {
+    await ddi.destroy<FlutterDDIModuleDefine>(
+      qualifier: moduleQualifier,
+    );
     this.isDestroyed = isDestroyed;
+    await Future.wait(_module.interceptors.map((e) => e.destroy()));
   }
 
   @override
   Widget build(BuildContext context) {
     return CustomPopScope(
       onPopInvoked: onPop,
-      moduleQualifier: moduleQualifier,
       child: FutureBuilder(
         /// Await the module's initialization
         future: _completer.future,
-        builder: (context, snapshot) {
-          return switch ((snapshot.hasError, snapshot.connectionState)) {
-            (true, _) => _error ??
-                ddi.getOptionalWith<ErrorModuleInterface, AsyncSnapshot>(
-                    parameter: snapshot) ??
-                Scaffold(
-                  backgroundColor: Colors.red,
-                  body: Center(
-                    child: Text(snapshot.error.toString()),
+        builder: (context, snapshot) =>
+            switch ((snapshot.hasError, snapshot.connectionState)) {
+          // Widget to show when there's an error during module initialization
+          (true, _) => _error ??=
+              ddi.getOptionalWith<ErrorModuleInterface, AsyncSnapshot>(
+                      parameter: snapshot) ??
+                  Scaffold(
+                    backgroundColor: Colors.red,
+                    body: Center(
+                      child: Text(snapshot.error.toString()),
+                    ),
                   ),
-                ),
-            (false, ConnectionState.done) => _cachedWidget ??=
-                widget.module.page(context),
-            _ => _loading ??
-                ddi.getOptional<LoaderModuleInterface>() ??
-                const Center(
-                  child: CircularProgressIndicator(),
-                ),
-          };
+          // Widget to show when the module is successfully initialized
+          (false, ConnectionState.done) => _cachedWidget ??=
+              widget.module.page(context),
+          // Widget to show while the module is being initialized
+          _ => _loading!,
         },
       ),
     );

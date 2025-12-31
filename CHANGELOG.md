@@ -1,3 +1,7 @@
+## 0.11.1
+* Fixed behavior when modules are destroyed.
+* Fixed a possible memory leak when using interceptors.
+
 ## 0.11.0
 * Bumped `dart_ddi` to 0.14.0
 * The WidgetFactory implementation has been migrated to the new `dart_ddi` interfaces.

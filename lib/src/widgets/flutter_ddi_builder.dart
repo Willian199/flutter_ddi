@@ -90,7 +90,8 @@ class _FlutterDDIBuilderState<BeanT extends Object>
     super.dispose();
   }
 
-  void onPop(bool isDestroyed) {
+  Future<void> onPop(bool isDestroyed) async {
+    await ddi.destroy(qualifier: widget.moduleName ?? BeanT);
     this.isDestroyed = isDestroyed;
   }
 
@@ -98,7 +99,6 @@ class _FlutterDDIBuilderState<BeanT extends Object>
   Widget build(BuildContext context) {
     return CustomPopScope(
       onPopInvoked: onPop,
-      moduleQualifier: widget.moduleName ?? BeanT,
       child: FutureBuilder(
         /// Await the module's initialization
         future: completer.future,
