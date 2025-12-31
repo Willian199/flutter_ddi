@@ -30,20 +30,9 @@ class CustomPopScope extends StatelessWidget {
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (pop, result) async {
-        final navigator = Navigator.of(context);
-        if (!navigator.canPop() ||
-            pop && !ddi.isRegistered(qualifier: moduleQualifier)) {
-          return;
-        }
-
         try {
           await ddi.destroy(qualifier: moduleQualifier);
-
           onPopInvoked(true);
-
-          if (context.mounted && !pop) {
-            navigator.pop(result);
-          }
         } catch (e) {
           // Log error but don't throw to prevent app crashes
           debugPrint('Error destroying module $moduleQualifier: $e');
