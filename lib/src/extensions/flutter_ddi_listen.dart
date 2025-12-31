@@ -9,49 +9,11 @@ extension FlutterDDIListen on Widget {
       listenable != null || ListenT != Object,
       'The Listenable of type $ListenT is not allowed.',
     );
-    return _ReactiveListener<ListenT>(
-      child: this,
-      listenable: listenable,
+    final ListenT listen = listenable ?? ddi.get<ListenT>();
+
+    return ListenableBuilder(
+      builder: (_, __) => this,
+      listenable: listen,
     );
-  }
-}
-
-class _ReactiveListener<ListenT extends Listenable> extends StatefulWidget {
-  const _ReactiveListener({
-    required this.child,
-    this.listenable,
-  });
-
-  final Widget child;
-  final Listenable? listenable;
-
-  @override
-  State<_ReactiveListener> createState() => __ReactiveListenerState<ListenT>();
-}
-
-class __ReactiveListenerState<ListenT extends Listenable>
-    extends State<_ReactiveListener> {
-  late final ListenT _listenable =
-      (widget.listenable ?? ddi.get<ListenT>()) as ListenT;
-
-  @override
-  void initState() {
-    super.initState();
-    _listenable.addListener(_handleChange);
-  }
-
-  @override
-  void dispose() {
-    _listenable.removeListener(_handleChange);
-    super.dispose();
-  }
-
-  void _handleChange() {
-    (context as Element).markNeedsBuild();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return widget.child;
   }
 }

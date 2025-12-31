@@ -76,12 +76,17 @@ class _FlutterDDIBuilderState<BeanT extends Object>
 
   @override
   void dispose() {
+    _cachedWidget = null;
+
+    if (!completer.isCompleted) {
+      completer.completeError('Widget disposed during initialization');
+    }
+
     // Destroy the registered module when the widget is disposed
     if (!isDestroyed) {
       ddi.destroy<BeanT>(qualifier: widget.moduleName);
     }
 
-    _cachedWidget = null;
     super.dispose();
   }
 

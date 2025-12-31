@@ -32,7 +32,7 @@ import 'package:flutter/widgets.dart';
 class WidgetFactory<BeanT extends Widget> extends DDIBaseFactory<BeanT> {
   WidgetFactory({
     required CustomBuilder<FutureOr<BeanT>> builder,
-    required bool canDestroy,
+    bool canDestroy = true,
     super.selector,
   })  : _builder = builder,
         _canDestroy = canDestroy;
@@ -64,7 +64,10 @@ class WidgetFactory<BeanT extends Widget> extends DDIBaseFactory<BeanT> {
 
   /// Registers the instance in [DDI].
   @override
-  Future<void> register({required Object qualifier}) async {
+  Future<void> register({
+    required Object qualifier,
+    required DDI ddiInstance,
+  }) async {
     _state = BeanStateEnum.registered;
   }
 
@@ -77,6 +80,7 @@ class WidgetFactory<BeanT extends Widget> extends DDIBaseFactory<BeanT> {
   @override
   BeanT getWith<ParameterT extends Object>({
     required Object qualifier,
+    required DDI ddiInstance,
     ParameterT? parameter,
   }) {
     _checkState(qualifier);
@@ -84,6 +88,7 @@ class WidgetFactory<BeanT extends Widget> extends DDIBaseFactory<BeanT> {
     final BeanT widgetInstance = createInstance<BeanT, ParameterT>(
       builder: _builder,
       parameter: parameter,
+      ddiInstance: ddiInstance,
     );
 
     // Run PostConstruct if implemented
@@ -105,6 +110,7 @@ class WidgetFactory<BeanT extends Widget> extends DDIBaseFactory<BeanT> {
   @override
   Future<BeanT> getAsyncWith<ParameterT extends Object>({
     required Object qualifier,
+    required DDI ddiInstance,
     ParameterT? parameter,
   }) async {
     _checkState(qualifier);
@@ -112,6 +118,7 @@ class WidgetFactory<BeanT extends Widget> extends DDIBaseFactory<BeanT> {
     final BeanT widgetInstance = await createInstanceAsync<BeanT, ParameterT>(
       builder: _builder,
       parameter: parameter,
+      ddiInstance: ddiInstance,
     );
 
     // Run PostConstruct if implemented
@@ -134,7 +141,10 @@ class WidgetFactory<BeanT extends Widget> extends DDIBaseFactory<BeanT> {
   /// **Note:** For WidgetFactory, instances are not cached, so destruction only removes
   /// the factory registration if `canDestroy` is `true`.
   @override
-  FutureOr<void> destroy(void Function() apply) {
+  FutureOr<void> destroy({
+    required void Function() apply,
+    required DDI ddiInstance,
+  }) {
     if (_canDestroy) {
       apply();
       _state = BeanStateEnum.destroyed;
@@ -147,7 +157,7 @@ class WidgetFactory<BeanT extends Widget> extends DDIBaseFactory<BeanT> {
   /// **Note:** Since instances are not kept in reference, there is no need for disposal.
   /// Instances are created and discarded automatically on each get request.
   @override
-  Future<void> dispose() {
+  Future<void> dispose({required DDI ddiInstance}) {
     return Future.value();
   }
 
