@@ -85,15 +85,17 @@ class _FlutterDDIOutletLoaderState extends State<FlutterDDIOutletLoader> {
     _cachedWidget = null;
   }
 
-  void onPop(bool isDestroyed) {
+  Future<void> onPop(bool isDestroyed) async {
+    await ddi.destroy(qualifier: moduleQualifier);
     this.isDestroyed = isDestroyed;
+
+    await Future.wait(_module.interceptors.map((e) => e.destroy()));
   }
 
   @override
   Widget build(BuildContext context) {
     return CustomPopScope(
       onPopInvoked: onPop,
-      moduleQualifier: moduleQualifier,
       child: FutureBuilder(
         /// Await the module's initialization
         future: _completer.future,

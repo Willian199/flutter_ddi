@@ -81,21 +81,24 @@ class _FlutterDDIRouterLoaderState extends State<FlutterDDIRouterLoader> {
       await ddi.destroy<FlutterDDIModuleDefine>(
         qualifier: moduleQualifier,
       );
+      await Future.wait(_module.interceptors.map((e) => e.destroy()));
     }
-    await Future.wait(_module.interceptors.map((e) => e.destroy()));
 
     _cachedWidget = null;
   }
 
-  void onPop(bool isDestroyed) {
+  Future<void> onPop(bool isDestroyed) async {
+    await ddi.destroy<FlutterDDIModuleDefine>(
+      qualifier: moduleQualifier,
+    );
     this.isDestroyed = isDestroyed;
+    await Future.wait(_module.interceptors.map((e) => e.destroy()));
   }
 
   @override
   Widget build(BuildContext context) {
     return CustomPopScope(
       onPopInvoked: onPop,
-      moduleQualifier: moduleQualifier,
       child: FutureBuilder(
         /// Await the module's initialization
         future: _completer.future,
