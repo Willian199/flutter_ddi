@@ -90,9 +90,9 @@ class _FlutterDDIBuilderState<BeanT extends Object>
     super.dispose();
   }
 
-  Future<void> onPop(bool isDestroyed) async {
+  Future<void> onPop() async {
     await ddi.destroy(qualifier: widget.moduleName ?? BeanT);
-    this.isDestroyed = isDestroyed;
+    isDestroyed = true;
   }
 
   @override

@@ -6,8 +6,7 @@ class CustomPopScope extends StatelessWidget {
   /// Creates a CustomPopScope widget.
   ///
   /// [child] - The child widget to wrap.
-  /// [moduleQualifier] - The qualifier of the module to destroy.
-  /// [onPopInvoked] - Callback when pop is invoked.
+  /// [onPopInvoked] - Callback invoked when the route is popped.
   const CustomPopScope({
     required this.child,
     required this.onPopInvoked,
@@ -18,7 +17,7 @@ class CustomPopScope extends StatelessWidget {
   final Widget child;
 
   /// Callback when pop is invoked.
-  final Future<void> Function(bool isDestroyed) onPopInvoked;
+  final Future<void> Function() onPopInvoked;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +25,7 @@ class CustomPopScope extends StatelessWidget {
       canPop: false,
       onPopInvokedWithResult: (pop, result) async {
         try {
-          await onPopInvoked(true);
+          await onPopInvoked();
         } catch (e) {
           // Log error but don't throw to prevent app crashes
           debugPrint('Error destroying module: $e');

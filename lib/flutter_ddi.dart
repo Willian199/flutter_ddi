@@ -4,7 +4,6 @@ export 'package:dart_ddi/dart_ddi.dart';
 
 export 'src/extensions/flutter_ddi_context.dart';
 export 'src/extensions/flutter_ddi_custom_builder_extension.dart';
-export 'src/extensions/flutter_ddi_listen.dart';
 export 'src/extensions/flutter_ddi_register_extension.dart';
 export 'src/extensions/flutter_ddi_router_extension.dart';
 export 'src/factories/widget_factory.dart';

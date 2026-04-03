@@ -75,7 +75,7 @@ import 'package:flutter/foundation.dart';
 ///   `Future` completes.
 /// - Disposing this command will also dispose the internal `ValueNotifier`.
 class _ReactiveCommandLink<TAction, TEffect> extends ValueNotifier<TEffect?> {
-  _ReactiveCommandLink() : super(null);
+  _ReactiveCommandLink([super.effect]);
 
   FutureOr<TEffect?> Function(TAction? command)? _handler;
 

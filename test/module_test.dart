@@ -66,9 +66,9 @@ void main() {
       expect(page.interceptors, isEmpty);
     });
 
-    test('should have correct module qualifier', () {
+    test('should have correct module ddi qualifier', () {
       final page = MockTestPage();
-      expect(page.moduleQualifier, equals(MockTestPage));
+      expect(page.routeQualifier, equals(MockTestPage));
     });
 
     test('should create router with correct path', () {

@@ -28,6 +28,10 @@ The `FlutterDDIModuleRouter` class is an abstraction that allows defining a modu
 
 `interceptors:` This property allows you to define a list of `ModuleInterceptor` instances that can intercept and handle operations during the module's creation. By default, it returns an empty list but can be extended to handle custom logic, such as logging, security, or validation tasks.
 
+#### Qualifiers and Context
+
+- `FlutterDDIModuleRouter` uses `routeQualifier` as its module qualifier API. Creating a new context.
+
 #### Example Usage:
 
 ```dart
@@ -204,51 +208,6 @@ class HomePageModel extends ChangeNotifier {
     _name = name;
     _surname = surname;
     notifyListeners();
-  }
-}
-```
-
-### FlutterDDIListen Extension
-
-The `FlutterDDIListen` extension provides a convenient way to make any widget reactive to `Listenable` changes. It wraps the widget with a listener that automatically rebuilds whenever the specified `Listenable` object notifies its listeners.
-
-### How It Works
-
-The `.listen()` extension method can be called on any widget and optionally accepts a `Listenable` instance. If no instance is provided, it will automatically retrieve one from the DDI container using the generic type parameter.
-
-### Characteristics
-
-- **DDI integration** - Can automatically retrieve `Listenable` instances from the DDI container
-- **Simple syntax** - Clean and readable code with minimal boilerplate
-
-### Usage Example
-
-```dart
-// Register a ChangeNotifier in DDI
-class CounterModel extends ChangeNotifier {
-  int _count = 0;
-  int get count => _count;
-  
-  void increment() {
-    _count++;
-    notifyListeners();
-  }
-}
-
-// Register in DDI
-ddi.singleton<CounterModel>(CounterModel.new);
-
-// Use in widget tree
-class CounterWidget extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    // Automatically retrieves CounterModel from DDI
-    return Text('Count: ${ddi.get<CounterModel>().count}')
-        .listen<CounterModel>();
-    
-    // Or pass instance explicitly
-    final counter = ddi.get<CounterModel>();
-    return Text('Count: ${counter.count}').listen(counter);
   }
 }
 ```

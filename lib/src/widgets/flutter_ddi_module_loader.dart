@@ -31,7 +31,10 @@ class _FlutterDDIRouterLoaderState extends State<FlutterDDIRouterLoader> {
 
   late final FlutterDDIModuleDefine _module = widget.module;
 
-  late final Object moduleQualifier = _module.moduleQualifier;
+  late final Object moduleRouterQualifier = _module.routeQualifier;
+
+  late final Object? moduleContextQualifier =
+      _module is DDIModule ? (_module as DDIModule).moduleQualifier : null;
 
   Widget? _error;
   Widget? _loading;
@@ -61,7 +64,7 @@ class _FlutterDDIRouterLoaderState extends State<FlutterDDIRouterLoader> {
 
       await ddi.object<FlutterDDIModuleDefine>(
         _module,
-        qualifier: moduleQualifier,
+        qualifier: moduleRouterQualifier,
         interceptors: interceptorsQualifiers.toSet(),
       );
 
@@ -73,25 +76,28 @@ class _FlutterDDIRouterLoaderState extends State<FlutterDDIRouterLoader> {
 
   @override
   void dispose() async {
-    super.dispose();
-
     // Destroy the registered module when the widget is disposed
-    // If you don't provide a `moduleQualifier`, the module will be destroyed with its default qualifier
+    // If you don't provide a custom `routeQualifier`, the module will be
+    // destroyed with its default qualifier.
     if (!isDestroyed) {
       await ddi.destroy<FlutterDDIModuleDefine>(
-        qualifier: moduleQualifier,
+        qualifier: moduleRouterQualifier,
       );
       await Future.wait(_module.interceptors.map((e) => e.destroy()));
     }
 
     _cachedWidget = null;
+
+    super.dispose();
   }
 
-  Future<void> onPop(bool isDestroyed) async {
+  Future<void> onPop() async {
     await ddi.destroy<FlutterDDIModuleDefine>(
-      qualifier: moduleQualifier,
+      qualifier: moduleRouterQualifier,
     );
-    this.isDestroyed = isDestroyed;
+
+    isDestroyed = true;
+
     await Future.wait(_module.interceptors.map((e) => e.destroy()));
   }
 

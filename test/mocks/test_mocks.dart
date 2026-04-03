@@ -285,7 +285,7 @@ class MockParamWidget extends StatelessWidget {
 }
 
 /// Mock Widget that implements DDIModule
-// Note: StatelessWidget is immutable, so we can't test moduleQualifier properly
+// Note: StatelessWidget is immutable, so we can't test routeQualifier properly
 // This is a limitation - DDIModule should be used with regular classes, not Widgets
 class MockModuleWidget extends StatelessWidget {
   const MockModuleWidget({super.key, this.qualifier});
