@@ -192,10 +192,7 @@ abstract class FlutterDDIOutletModule extends FlutterDDIRouter {
   /// [arguments] - Optional arguments to pass to the route.
   ///
   /// Returns a Future that completes when the navigation is finished.
-  Future<T?> navigateTo<T extends Object?>(String routeName,
-      {Object? arguments}) {
-    return navigatorKey.currentState
-            ?.pushNamed<T>(routeName, arguments: arguments) ??
-        Future.value();
+  Future<T?> navigateTo<T extends Object?>(String routeName, {Object? arguments}) {
+    return navigatorKey.currentState?.pushNamed<T>(routeName, arguments: arguments) ?? Future.value();
   }
 }

@@ -113,10 +113,8 @@ class _ReactiveCommandLink<TAction, TEffect> extends ValueNotifier<TEffect?> {
 
 /// Semantic alias to represent a **reactive execution command**.
 /// Ideal for scenarios where you need to observe effect changes reactively.
-typedef ReactiveCommand<TAction, TEffect>
-    = _ReactiveCommandLink<TAction, TEffect>;
+typedef ReactiveCommand<TAction, TEffect> = _ReactiveCommandLink<TAction, TEffect>;
 
 /// Semantic alias to represent a **reactive execution effect**.
 /// Ideal for reactive scenarios where effects should notify listeners automatically.
-typedef ReactiveEffect<TAction, TEffect>
-    = _ReactiveCommandLink<TAction, TEffect>;
+typedef ReactiveEffect<TAction, TEffect> = _ReactiveCommandLink<TAction, TEffect>;

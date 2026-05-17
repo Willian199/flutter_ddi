@@ -269,7 +269,7 @@ The `ReactiveCommand` and `ReactiveEffect` classes are reactive variations of `C
 - Supports synchronous or asynchronous execution (`FutureOr<TEffect?>`)
 - Automatically notifies listeners when effects change
 - Extends `ValueNotifier`, making it compatible with Flutter's reactive system
-- Can be used with widgets like `ValueListenableBuilder` or the `.listen()` extension
+- Can be used with widgets like `ValueListenableBuilder`
 - Allows redefining or clearing the handler with `clear()`
 - Semantic aliases: `ReactiveCommand` (for emitters) and `ReactiveEffect` (for executors)
 
@@ -308,9 +308,6 @@ ValueListenableBuilder<int?>(
     return Text('Length: ${value ?? 0}');
   },
 )
-
-// Or using the listen extension
-Text('Length: ${lengthCommand.value ?? 0}').listen(lengthCommand);
 ```
 
 ### Notes

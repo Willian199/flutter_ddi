@@ -2,6 +2,9 @@
 * Removed `moduleQualifier` from `FlutterDDIModuleDefine`.
 * `routeQualifier` is now the module qualifier API in `FlutterDDIModuleDefine`.
 
+** Breaking Changes **
+* Removed `FlutterDDIListen` and `.listen` extension.
+
 ## 0.11.1
 * Fixed behavior when modules are destroyed.
 * Fixed a possible memory leak when using interceptors.

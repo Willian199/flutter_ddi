@@ -5,8 +5,7 @@ import '../mocks/test_mocks.dart';
 
 void main() {
   group('Widget Scope Integration Tests', () {
-    testWidgets('should use widget scope in Flutter widget tree',
-        (WidgetTester tester) async {
+    testWidgets('should use widget scope in Flutter widget tree', (WidgetTester tester) async {
       await ddi.widget<MockTestWidget>(MockTestWidget.new);
 
       await tester.pumpWidget(
@@ -34,8 +33,7 @@ void main() {
       await ddi.destroy<MockTestWidget>();
     });
 
-    testWidgets('should create fresh instances on each build',
-        (WidgetTester tester) async {
+    testWidgets('should create fresh instances on each build', (WidgetTester tester) async {
       await ddi.widget<MockTestWidget>(MockTestWidget.new);
 
       MockTestWidget? previousInstance;
@@ -68,8 +66,7 @@ void main() {
       await ddi.destroy<MockTestWidget>();
     });
 
-    testWidgets('should work with PostConstruct in widget tree',
-        (WidgetTester tester) async {
+    testWidgets('should work with PostConstruct in widget tree', (WidgetTester tester) async {
       await ddi.widget<MockPostConstructWidget2>(MockPostConstructWidget2.new);
 
       await tester.pumpWidget(

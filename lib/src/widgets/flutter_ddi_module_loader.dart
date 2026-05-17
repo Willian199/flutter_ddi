@@ -6,8 +6,7 @@ import 'package:flutter_ddi/src/widgets/flutter_ddi_custom_pop_scope.dart';
 
 /// Widget that loads a module with dependency injection.
 /// This widget is used to load a module's page with its dependencies resolved.
-class FlutterDDIRouterLoader<ModuleT extends FlutterDDIModuleDefine>
-    extends StatefulWidget {
+class FlutterDDIRouterLoader<ModuleT extends FlutterDDIModuleDefine> extends StatefulWidget {
   /// Creates a FlutterDDIRouterLoader widget.
   ///
   /// [module] - The module to be loaded.
@@ -33,8 +32,7 @@ class _FlutterDDIRouterLoaderState extends State<FlutterDDIRouterLoader> {
 
   late final Object moduleRouterQualifier = _module.routeQualifier;
 
-  late final Object? moduleContextQualifier =
-      _module is DDIModule ? (_module as DDIModule).moduleQualifier : null;
+  late final Object? moduleContextQualifier = _module is DDIModule ? (_module as DDIModule).moduleQualifier : null;
 
   Widget? _error;
   Widget? _loading;
@@ -49,7 +47,8 @@ class _FlutterDDIRouterLoaderState extends State<FlutterDDIRouterLoader> {
 
     Future.microtask(initialize);
 
-    _loading ??= ddi.getOptional<LoaderModuleInterface>() ??
+    _loading ??=
+        ddi.getOptional<LoaderModuleInterface>() ??
         const Center(
           child: CircularProgressIndicator(),
         );
@@ -57,8 +56,7 @@ class _FlutterDDIRouterLoaderState extends State<FlutterDDIRouterLoader> {
 
   Future<void> initialize() async {
     try {
-      final List<Object> interceptorsQualifiers =
-          await Future.wait(_module.interceptors.map((e) => e.register()));
+      final List<Object> interceptorsQualifiers = await Future.wait(_module.interceptors.map((e) => e.register()));
 
       _module.context = context;
 
@@ -75,23 +73,24 @@ class _FlutterDDIRouterLoaderState extends State<FlutterDDIRouterLoader> {
   }
 
   @override
-  void dispose() async {
-    // Destroy the registered module when the widget is disposed
-    // If you don't provide a custom `routeQualifier`, the module will be
-    // destroyed with its default qualifier.
-    if (!isDestroyed) {
-      await ddi.destroy<FlutterDDIModuleDefine>(
-        qualifier: moduleRouterQualifier,
-      );
-      await Future.wait(_module.interceptors.map((e) => e.destroy()));
-    }
+  void dispose() {
+    // `dispose` must stay synchronous so `super.dispose()` is reached before
+    // Flutter finalizes the State lifecycle.
+    unawaited(_destroyModule());
 
     _cachedWidget = null;
 
     super.dispose();
   }
 
-  Future<void> onPop() async {
+  Future<void> _destroyModule() async {
+    // Destroy the registered module when the widget is disposed
+    // If you don't provide a custom `routeQualifier`, the module will be
+    // destroyed with its default qualifier.
+    if (isDestroyed) {
+      return;
+    }
+
     await ddi.destroy<FlutterDDIModuleDefine>(
       qualifier: moduleRouterQualifier,
     );
@@ -101,6 +100,10 @@ class _FlutterDDIRouterLoaderState extends State<FlutterDDIRouterLoader> {
     await Future.wait(_module.interceptors.map((e) => e.destroy()));
   }
 
+  Future<void> onPop() {
+    return _destroyModule();
+  }
+
   @override
   Widget build(BuildContext context) {
     return CustomPopScope(
@@ -108,21 +111,19 @@ class _FlutterDDIRouterLoaderState extends State<FlutterDDIRouterLoader> {
       child: FutureBuilder(
         /// Await the module's initialization
         future: _completer.future,
-        builder: (context, snapshot) =>
-            switch ((snapshot.hasError, snapshot.connectionState)) {
+        builder: (context, snapshot) => switch ((snapshot.hasError, snapshot.connectionState)) {
           // Widget to show when there's an error during module initialization
-          (true, _) => _error ??=
-              ddi.getOptionalWith<ErrorModuleInterface, AsyncSnapshot>(
-                      parameter: snapshot) ??
-                  Scaffold(
-                    backgroundColor: Colors.red,
-                    body: Center(
-                      child: Text(snapshot.error.toString()),
-                    ),
+          (true, _) =>
+            _error ??=
+                ddi.getOptionalWith<ErrorModuleInterface, AsyncSnapshot>(parameter: snapshot) ??
+                Scaffold(
+                  backgroundColor: Colors.red,
+                  body: Center(
+                    child: Text(snapshot.error.toString()),
                   ),
+                ),
           // Widget to show when the module is successfully initialized
-          (false, ConnectionState.done) => _cachedWidget ??=
-              widget.module.page(context),
+          (false, ConnectionState.done) => _cachedWidget ??= widget.module.page(context),
           // Widget to show while the module is being initialized
           _ => _loading!,
         },

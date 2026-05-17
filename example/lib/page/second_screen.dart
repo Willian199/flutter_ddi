@@ -4,7 +4,7 @@ import 'package:flutter_ddi/flutter_ddi.dart';
 
 class SecondScreen extends StatelessWidget {
   SecondScreen({super.key})
-      : message = ddi.get<String>(qualifier: 'second_sub');
+    : message = ddi.get<String>(qualifier: 'second_sub');
 
   final String message;
 

@@ -5,8 +5,7 @@ import 'mocks/test_mocks.dart';
 
 void main() {
   group('FlutterDDIContext Extension Tests', () {
-    testWidgets('should get dependency from context',
-        (WidgetTester tester) async {
+    testWidgets('should get dependency from context', (WidgetTester tester) async {
       // Register a test dependency
       ddi.singleton<MockTestService>(() => MockTestService());
 
@@ -28,11 +27,9 @@ void main() {
       ddi.destroy<MockTestService>();
     });
 
-    testWidgets('should get dependency with qualifier',
-        (WidgetTester tester) async {
+    testWidgets('should get dependency with qualifier', (WidgetTester tester) async {
       const qualifier = 'custom_service';
-      ddi.singleton<MockTestService>(() => MockTestService(),
-          qualifier: qualifier);
+      ddi.singleton<MockTestService>(() => MockTestService(), qualifier: qualifier);
 
       await tester.pumpWidget(
         MaterialApp(
@@ -52,8 +49,7 @@ void main() {
       ddi.destroy<MockTestService>();
     });
 
-    testWidgets('should throw error when dependency not found',
-        (WidgetTester tester) async {
+    testWidgets('should throw error when dependency not found', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Builder(
@@ -74,8 +70,7 @@ void main() {
       expect(find.textContaining('Error:'), findsOneWidget);
     });
 
-    testWidgets('should get optional dependency when registered',
-        (WidgetTester tester) async {
+    testWidgets('should get optional dependency when registered', (WidgetTester tester) async {
       ddi.singleton<MockTestService>(() => MockTestService());
 
       await tester.pumpWidget(
@@ -96,8 +91,7 @@ void main() {
       ddi.destroy<MockTestService>();
     });
 
-    testWidgets('should return null when optional dependency not found',
-        (WidgetTester tester) async {
+    testWidgets('should return null when optional dependency not found', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Builder(
@@ -114,11 +108,9 @@ void main() {
       expect(find.text('No service'), findsOneWidget);
     });
 
-    testWidgets('should get optional dependency with qualifier',
-        (WidgetTester tester) async {
+    testWidgets('should get optional dependency with qualifier', (WidgetTester tester) async {
       const qualifier = 'optional_service';
-      ddi.singleton<MockTestService>(() => MockTestService(),
-          qualifier: qualifier);
+      ddi.singleton<MockTestService>(() => MockTestService(), qualifier: qualifier);
 
       await tester.pumpWidget(
         MaterialApp(
@@ -138,19 +130,18 @@ void main() {
       ddi.destroy(qualifier: qualifier);
     });
 
-    testWidgets('should get route arguments from context',
-        (WidgetTester tester) async {
+    testWidgets('should get route arguments from context', (WidgetTester tester) async {
       final testArgs = {'key': 'value', 'number': 42};
 
       await tester.pumpWidget(
         MaterialApp(
           routes: {
             '/test': (context) => Builder(
-                  builder: (context) {
-                    final args = context.arguments<Map<String, dynamic>>();
-                    return Text(args?['key']?.toString() ?? 'no args');
-                  },
-                ),
+              builder: (context) {
+                final args = context.arguments<Map<String, dynamic>>();
+                return Text(args?['key']?.toString() ?? 'no args');
+              },
+            ),
           },
           home: Navigator(
             onGenerateRoute: (settings) {
@@ -176,8 +167,7 @@ void main() {
       expect(find.text('value'), findsOneWidget);
     });
 
-    testWidgets('should handle null route arguments',
-        (WidgetTester tester) async {
+    testWidgets('should handle null route arguments', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Navigator(
@@ -203,8 +193,7 @@ void main() {
       expect(find.text('null args'), findsOneWidget);
     });
 
-    testWidgets('should get typed route arguments',
-        (WidgetTester tester) async {
+    testWidgets('should get typed route arguments', (WidgetTester tester) async {
       const testString = 'test_string_arg';
 
       await tester.pumpWidget(
@@ -233,8 +222,7 @@ void main() {
       expect(find.text('test_string_arg'), findsOneWidget);
     });
 
-    testWidgets('should get optional dependency with parameter',
-        (WidgetTester tester) async {
+    testWidgets('should get optional dependency with parameter', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Builder(
@@ -253,8 +241,7 @@ void main() {
       expect(find.text('No service with param'), findsOneWidget);
     });
 
-    testWidgets('should work with multiple dependencies',
-        (WidgetTester tester) async {
+    testWidgets('should work with multiple dependencies', (WidgetTester tester) async {
       ddi.dependent<MockTestService>(() => MockTestService());
       ddi.application<MockTestModule>(() => MockTestModule());
 
@@ -284,8 +271,7 @@ void main() {
       ddi.destroy<MockTestModule>();
     });
 
-    testWidgets('should handle dependency lifecycle',
-        (WidgetTester tester) async {
+    testWidgets('should handle dependency lifecycle', (WidgetTester tester) async {
       ddi.singleton<MockTestService>(() => MockTestService());
 
       await tester.pumpWidget(

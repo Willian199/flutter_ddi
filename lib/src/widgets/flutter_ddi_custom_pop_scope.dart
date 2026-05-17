@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 /// Custom PopScope widget that handles module destruction when navigating back.
 /// This widget ensures proper cleanup of DDI modules when the user navigates away.
-class CustomPopScope extends StatelessWidget {
+class CustomPopScope extends StatefulWidget {
   /// Creates a CustomPopScope widget.
   ///
   /// [child] - The child widget to wrap.
@@ -20,18 +20,46 @@ class CustomPopScope extends StatelessWidget {
   final Future<void> Function() onPopInvoked;
 
   @override
+  State<CustomPopScope> createState() => _CustomPopScopeState();
+}
+
+class _CustomPopScopeState extends State<CustomPopScope> {
+  bool _skipNextSuccessfulPop = false;
+
+  @override
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
-      onPopInvokedWithResult: (pop, result) async {
+      onPopInvokedWithResult: (didPop, result) async {
         try {
-          await onPopInvoked();
+          if (didPop) {
+            if (_skipNextSuccessfulPop) {
+              _skipNextSuccessfulPop = false;
+              return;
+            }
+
+            await widget.onPopInvoked();
+            return;
+          }
+
+          final nav = Navigator.of(context);
+
+          if (!nav.canPop()) {
+            return;
+          }
+
+          await widget.onPopInvoked();
+
+          _skipNextSuccessfulPop = true;
+          nav.pop(result);
         } catch (e) {
           // Log error but don't throw to prevent app crashes
-          debugPrint('Error destroying module: $e');
+          debugPrint(
+            '[CustomPopScope ${identityHashCode(this)}] error destroying module: $e',
+          );
         }
       },
-      child: child,
+      child: widget.child,
     );
   }
 }

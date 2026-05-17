@@ -43,8 +43,7 @@ void main() {
       expect(find.text('Mock Test Page'), findsOneWidget);
     });
 
-    testWidgets('should handle page without interceptors',
-        (WidgetTester tester) async {
+    testWidgets('should handle page without interceptors', (WidgetTester tester) async {
       final page = FlutterDDIPage.from(
         path: '/no-interceptor-test',
         page: (_) => const Text('No Interceptor Test Page'),
@@ -98,8 +97,7 @@ void main() {
       expect(routes.containsKey('/mock-router/sub2'), isTrue);
     });
 
-    testWidgets('should build router page correctly',
-        (WidgetTester tester) async {
+    testWidgets('should build router page correctly', (WidgetTester tester) async {
       final router = MockTestRouter();
 
       await tester.pumpWidget(
@@ -135,8 +133,7 @@ void main() {
       expect(outlet.modules, hasLength(2));
     });
 
-    testWidgets('should build outlet page correctly',
-        (WidgetTester tester) async {
+    testWidgets('should build outlet page correctly', (WidgetTester tester) async {
       final outlet = MockOutletModule();
 
       await tester.pumpWidget(
@@ -158,8 +155,7 @@ void main() {
       expect(result, isNull);
     });
 
-    testWidgets('should handle module context setting',
-        (WidgetTester tester) async {
+    testWidgets('should handle module context setting', (WidgetTester tester) async {
       final page = MockTestPage();
 
       await tester.pumpWidget(
@@ -182,8 +178,7 @@ void main() {
       expect(() => page.context, throwsA(isA<NullContextException>()));
     });
 
-    testWidgets('should handle module destruction',
-        (WidgetTester tester) async {
+    testWidgets('should handle module destruction', (WidgetTester tester) async {
       final page = MockTestPage();
 
       await tester.pumpWidget(
@@ -203,8 +198,7 @@ void main() {
       await page.destroy();
     });
 
-    testWidgets('should handle router destruction',
-        (WidgetTester tester) async {
+    testWidgets('should handle router destruction', (WidgetTester tester) async {
       final router = MockTestRouter();
 
       await tester.pumpWidget(
@@ -235,8 +229,7 @@ void main() {
     });
 
     // Removido teste com interceptors via factory pois não é compatível com ModuleInterceptor final
-    testWidgets('should build factory page correctly',
-        (WidgetTester tester) async {
+    testWidgets('should build factory page correctly', (WidgetTester tester) async {
       final page = FlutterDDIPage.from(
         path: '/factory-build-test',
         page: (_) => const Text('Factory Build Test'),
@@ -253,8 +246,7 @@ void main() {
       expect(find.text('Factory Build Test'), findsOneWidget);
     });
 
-    testWidgets('should work with MaterialApp navigation',
-        (WidgetTester tester) async {
+    testWidgets('should work with MaterialApp navigation', (WidgetTester tester) async {
       final page = MockTestPage();
 
       await tester.pumpWidget(
@@ -272,8 +264,7 @@ void main() {
       expect(find.text('Mock Test Page'), findsOneWidget);
     });
 
-    testWidgets('should handle multiple modules in same app',
-        (WidgetTester tester) async {
+    testWidgets('should handle multiple modules in same app', (WidgetTester tester) async {
       final page1 = MockTestPage();
       final page2 = FlutterDDIPage.from(
         path: '/page2',
@@ -295,8 +286,7 @@ void main() {
       expect(find.text('Page 2'), findsOneWidget);
     });
 
-    testWidgets('should work with FlutterDDIBuilder',
-        (WidgetTester tester) async {
+    testWidgets('should work with FlutterDDIBuilder', (WidgetTester tester) async {
       final page = MockTestPage();
 
       await tester.pumpWidget(
@@ -311,6 +301,36 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Mock Test Page'), findsOneWidget);
+    });
+
+    testWidgets('router loader should dispose without lifecycle assertion', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: FlutterDDIRouterLoader(module: MockTestRouter()),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      await tester.pumpWidget(const MaterialApp(home: SizedBox()));
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('outlet loader should dispose without lifecycle assertion', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: FlutterDDIOutletLoader(module: MockOutletModule()),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      await tester.pumpWidget(const MaterialApp(home: SizedBox()));
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
     });
   });
 }
