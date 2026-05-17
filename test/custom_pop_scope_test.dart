@@ -4,8 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('CustomPopScope', () {
-    testWidgets('does not destroy when back is attempted on the last route',
-        (WidgetTester tester) async {
+    testWidgets('does not destroy when back is attempted on the last route', (WidgetTester tester) async {
       int destroyCount = 0;
 
       await tester.pumpWidget(
@@ -30,8 +29,7 @@ void main() {
       expect(find.text('Home'), findsOneWidget);
     });
 
-    testWidgets('destroys when the route already popped',
-        (WidgetTester tester) async {
+    testWidgets('destroys when the route already popped', (WidgetTester tester) async {
       int destroyCount = 0;
 
       await tester.pumpWidget(
@@ -56,8 +54,7 @@ void main() {
       expect(find.text('Home'), findsOneWidget);
     });
 
-    testWidgets('destroys and manually pops when back is blocked but possible',
-        (WidgetTester tester) async {
+    testWidgets('destroys and manually pops when back is blocked but possible', (WidgetTester tester) async {
       int destroyCount = 0;
 
       await tester.pumpWidget(
@@ -65,16 +62,18 @@ void main() {
           home: const Text('Home'),
           routes: <String, WidgetBuilder>{
             '/details': (_) => CustomPopScope(
-                  onPopInvoked: () async {
-                    destroyCount++;
-                  },
-                  child: const Text('Details'),
-                ),
+              onPopInvoked: () async {
+                destroyCount++;
+              },
+              child: const Text('Details'),
+            ),
           },
         ),
       );
 
-      tester.state<NavigatorState>(find.byType(Navigator)).pushNamed(
+      tester
+          .state<NavigatorState>(find.byType(Navigator))
+          .pushNamed(
             '/details',
           );
       await tester.pumpAndSettle();
