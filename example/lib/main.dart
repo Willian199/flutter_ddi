@@ -50,13 +50,14 @@ class AppModule extends FlutterDDIRouter {
   String get path => '/';
 
   @override
-  WidgetBuilder get page => (_) => const HomeScreen();
+  WidgetBuilder get page =>
+      (_) => const HomeScreen();
 
   @override
   List<FlutterDDIModuleDefine> get modules => [
-        FirstSubModule(),
-        SecondSubModule(),
-      ];
+    FirstSubModule(),
+    SecondSubModule(),
+  ];
 }
 
 class Luck extends DDIInterceptor<FlutterDDIModuleDefine> {
@@ -64,7 +65,8 @@ class Luck extends DDIInterceptor<FlutterDDIModuleDefine> {
 
   @override
   Future<FlutterDDIModuleDefine> onCreate(
-      FlutterDDIModuleDefine instance) async {
+    FlutterDDIModuleDefine instance,
+  ) async {
     final r = random.nextInt(10) + 1;
     if (r % 2 != 0) {
       ScaffoldMessenger.of(instance.context).showSnackBar(
@@ -89,18 +91,18 @@ class FirstSubModule extends FlutterDDIOutletModule {
   String get path => '/first';
 
   @override
-  WidgetBuilder get page => (_) => const FirstScreen();
+  WidgetBuilder get page =>
+      (_) => const FirstScreen();
 
   @override
   List<ModuleInterceptor> get interceptors => [
-        ModuleInterceptor<Luck>.of(
-            factory: ApplicationFactory<Luck>(builder: Luck.new.builder)),
-      ];
+    ModuleInterceptor<Luck>.of(
+      factory: ApplicationFactory<Luck>(builder: Luck.new.builder),
+    ),
+  ];
 
   @override
-  List<FlutterDDIModuleDefine> get modules => [
-        DetailsModule(),
-      ];
+  List<FlutterDDIModuleDefine> get modules => [DetailsModule()];
 }
 
 // Details Module
@@ -109,12 +111,11 @@ class DetailsModule extends FlutterDDIModuleRouter {
   String get path => '/details';
 
   @override
-  WidgetBuilder get page => (_) => const DetailsScreen();
+  WidgetBuilder get page =>
+      (_) => const DetailsScreen();
 
   @override
-  List<ModuleInterceptor> get interceptors => [
-        ModuleInterceptor<Luck>.from(),
-      ];
+  List<ModuleInterceptor> get interceptors => [ModuleInterceptor<Luck>.from()];
 
   @override
   void onPostConstruct() {
@@ -128,13 +129,15 @@ class SecondSubModule extends FlutterDDIModuleRouter {
   String get path => '/second';
 
   @override
-  WidgetBuilder get page => (_) => SecondScreen();
+  WidgetBuilder get page =>
+      (_) => SecondScreen();
 
   @override
   List<ModuleInterceptor> get interceptors => [
-        ModuleInterceptor<Luck>.of(
-            factory: ApplicationFactory<Luck>(builder: Luck.new.builder)),
-      ];
+    ModuleInterceptor<Luck>.of(
+      factory: ApplicationFactory<Luck>(builder: Luck.new.builder),
+    ),
+  ];
 
   @override
   FutureOr<void> onPostConstruct() {

@@ -70,8 +70,7 @@ void main() {
 
       expect(ddi.isRegistered<MockTestWidget>(), isTrue);
 
-      final instance =
-          ddi.get<MockTestWidget>(select: 'selected', qualifier: 'wrong');
+      final instance = ddi.get<MockTestWidget>(select: 'selected', qualifier: 'wrong');
       expect(instance, isA<MockTestWidget>());
 
       await ddi.destroy<MockTestWidget>();

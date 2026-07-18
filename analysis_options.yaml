@@ -9,6 +9,10 @@
 # packages, and plugins designed to encourage good coding practices.
 include: package:lints/recommended.yaml
 
+formatter:
+  page_width: 120
+  trailing_commas: preserve
+
 analyzer:
   exclude: [build/**]
   language:
@@ -106,7 +110,6 @@ linter:
     prefer_spread_collections: true
     unnecessary_new: true
     use_enums: true
-    use_if_null_to_convert_nulls_to_bools: true
     use_late_for_private_fields_and_variables: true
     avoid_unused_constructor_parameters: true
     unnecessary_null_in_if_null_operators: true

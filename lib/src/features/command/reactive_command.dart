@@ -75,7 +75,7 @@ import 'package:flutter/foundation.dart';
 ///   `Future` completes.
 /// - Disposing this command will also dispose the internal `ValueNotifier`.
 class _ReactiveCommandLink<TAction, TEffect> extends ValueNotifier<TEffect?> {
-  _ReactiveCommandLink() : super(null);
+  _ReactiveCommandLink([super.effect]);
 
   FutureOr<TEffect?> Function(TAction? command)? _handler;
 
@@ -113,10 +113,8 @@ class _ReactiveCommandLink<TAction, TEffect> extends ValueNotifier<TEffect?> {
 
 /// Semantic alias to represent a **reactive execution command**.
 /// Ideal for scenarios where you need to observe effect changes reactively.
-typedef ReactiveCommand<TAction, TEffect>
-    = _ReactiveCommandLink<TAction, TEffect>;
+typedef ReactiveCommand<TAction, TEffect> = _ReactiveCommandLink<TAction, TEffect>;
 
 /// Semantic alias to represent a **reactive execution effect**.
 /// Ideal for reactive scenarios where effects should notify listeners automatically.
-typedef ReactiveEffect<TAction, TEffect>
-    = _ReactiveCommandLink<TAction, TEffect>;
+typedef ReactiveEffect<TAction, TEffect> = _ReactiveCommandLink<TAction, TEffect>;

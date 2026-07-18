@@ -58,7 +58,8 @@ class MockTestPage extends FlutterDDIPage {
   String get path => '/mock-test';
 
   @override
-  WidgetBuilder get page => (_) => const Text('Mock Test Page');
+  WidgetBuilder get page =>
+      (_) => const Text('Mock Test Page');
 }
 
 /// Mock router for testing FlutterDDIRouter
@@ -67,13 +68,14 @@ class MockTestRouter extends FlutterDDIRouter {
   String get path => '/mock-router';
 
   @override
-  WidgetBuilder get page => (_) => const Text('Mock Router Page');
+  WidgetBuilder get page =>
+      (_) => const Text('Mock Router Page');
 
   @override
   List<FlutterDDIModuleDefine> get modules => [
-        MockSubModule1(),
-        MockSubModule2(),
-      ];
+    MockSubModule1(),
+    MockSubModule2(),
+  ];
 }
 
 /// Mock sub-module 1
@@ -82,7 +84,8 @@ class MockSubModule1 extends FlutterDDIPage {
   String get path => '/sub1';
 
   @override
-  WidgetBuilder get page => (_) => const Text('Mock Sub Module 1');
+  WidgetBuilder get page =>
+      (_) => const Text('Mock Sub Module 1');
 }
 
 /// Mock sub-module 2
@@ -91,7 +94,8 @@ class MockSubModule2 extends FlutterDDIPage {
   String get path => '/sub2';
 
   @override
-  WidgetBuilder get page => (_) => const Text('Mock Sub Module 2');
+  WidgetBuilder get page =>
+      (_) => const Text('Mock Sub Module 2');
 }
 
 /// Mock outlet module for testing FlutterDDIOutletModule
@@ -100,13 +104,14 @@ class MockOutletModule extends FlutterDDIOutletModule {
   String get path => '/mock-outlet';
 
   @override
-  WidgetBuilder get page => (_) => const Text('Mock Outlet Module');
+  WidgetBuilder get page =>
+      (_) => const Text('Mock Outlet Module');
 
   @override
   List<FlutterDDIModuleDefine> get modules => [
-        MockSubModule1(),
-        MockSubModule2(),
-      ];
+    MockSubModule1(),
+    MockSubModule2(),
+  ];
 }
 
 /// Mock error module interface implementation
@@ -144,8 +149,7 @@ class MockListenableWidget extends StatefulWidget {
   State<MockListenableWidget> createState() => MockListenableWidgetState();
 }
 
-class MockListenableWidgetState
-    extends ListenableState<MockListenableWidget, MockTestChangeNotifier> {
+class MockListenableWidgetState extends ListenableState<MockListenableWidget, MockTestChangeNotifier> {
   @override
   Widget build(BuildContext context) {
     return Text('Count: ${listenable.count}');
@@ -214,7 +218,8 @@ class CustomErrorLoadingRouter extends FlutterDDIRouter {
   String get path => '/custom-router';
 
   @override
-  WidgetBuilder get page => (_) => const Text('Custom Router Page');
+  WidgetBuilder get page =>
+      (_) => const Text('Custom Router Page');
 
   @override
   List<FlutterDDIModuleDefine> get modules => [];
@@ -285,7 +290,7 @@ class MockParamWidget extends StatelessWidget {
 }
 
 /// Mock Widget that implements DDIModule
-// Note: StatelessWidget is immutable, so we can't test moduleQualifier properly
+// Note: StatelessWidget is immutable, so we can't test routeQualifier properly
 // This is a limitation - DDIModule should be used with regular classes, not Widgets
 class MockModuleWidget extends StatelessWidget {
   const MockModuleWidget({super.key, this.qualifier});
@@ -328,8 +333,7 @@ class MockIndestructibleWidget3 extends StatelessWidget {
 }
 
 /// Mock Widget with PostConstruct for testing canDestroy: false
-class MockIndestructiblePostConstructWidget extends StatelessWidget
-    with PostConstruct {
+class MockIndestructiblePostConstructWidget extends StatelessWidget with PostConstruct {
   MockIndestructiblePostConstructWidget({super.key});
   bool _initialized = false;
   bool get initialized => _initialized;

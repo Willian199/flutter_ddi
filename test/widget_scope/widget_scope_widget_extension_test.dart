@@ -106,8 +106,7 @@ void main() {
     });
 
     test('should work with widget parameter', () async {
-      await ddi.widget<MockParamWidget>(
-          () => const MockParamWidget(message: 'Test'));
+      await ddi.widget<MockParamWidget>(() => const MockParamWidget(message: 'Test'));
 
       final instance = ddi.get<MockParamWidget>();
       expect(instance.message, equals('Test'));

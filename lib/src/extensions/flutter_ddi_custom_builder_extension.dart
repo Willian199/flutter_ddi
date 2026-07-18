@@ -5,8 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_ddi/src/factories/widget_factory.dart';
 
 /// Extension for [CustomBuilder] that adds Widget Scope support.
-extension FlutterDDICustomBuilderExtension<BeanT extends Widget>
-    on CustomBuilder<BeanT> {
+extension FlutterDDICustomBuilderExtension<BeanT extends Widget> on CustomBuilder<BeanT> {
   /// Registers an instance as a Widget Scope.
   ///
   /// The Widget Scope creates a new instance every time it is requested,

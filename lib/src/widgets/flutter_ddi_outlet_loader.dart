@@ -6,8 +6,7 @@ import 'package:flutter_ddi/src/widgets/flutter_ddi_custom_pop_scope.dart';
 
 /// Widget that loads a module with dependency injection.
 /// This widget is used to load a module's page with its dependencies resolved.
-class FlutterDDIOutletLoader<ModuleT extends FlutterDDIOutletModule>
-    extends StatefulWidget {
+class FlutterDDIOutletLoader<ModuleT extends FlutterDDIOutletModule> extends StatefulWidget {
   /// Creates a FlutterDDIOutletLoader widget.
   ///
   /// [module] - The module to be loaded.
@@ -31,7 +30,8 @@ class _FlutterDDIOutletLoaderState extends State<FlutterDDIOutletLoader> {
 
   late final FlutterDDIOutletModule _module = widget.module;
 
-  late final Object moduleQualifier = _module.moduleQualifier;
+  late final Object moduleRouterQualifier = _module.routeQualifier;
+  late final Object? moduleContextQualifier = _module is DDIModule ? (_module as DDIModule).moduleQualifier : null;
 
   Widget? _error;
   Widget? _loading;
@@ -49,14 +49,13 @@ class _FlutterDDIOutletLoaderState extends State<FlutterDDIOutletLoader> {
 
   Future<void> initialize() async {
     try {
-      final List<Object> interceptorsQualifiers =
-          await Future.wait(_module.interceptors.map((e) => e.register()));
+      final List<Object> interceptorsQualifiers = await Future.wait(_module.interceptors.map((e) => e.register()));
 
       _module.context = context;
 
       await ddi.object<FlutterDDIOutletModule>(
         _module,
-        qualifier: moduleQualifier,
+        qualifier: moduleRouterQualifier,
         interceptors: interceptorsQualifiers.toSet(),
       );
 
@@ -69,27 +68,36 @@ class _FlutterDDIOutletLoaderState extends State<FlutterDDIOutletLoader> {
   }
 
   @override
-  void dispose() async {
-    super.dispose();
-
-    // Destroy the registered module when the widget is disposed
-    // If you don't provide a `moduleQualifier`, the module will be destroyed with its default qualifier
-    if (!isDestroyed) {
-      await ddi.destroy<FlutterDDIOutletModule>(
-        qualifier: moduleQualifier,
-      );
-
-      await Future.wait(_module.interceptors.map((e) => e.destroy()));
-    }
+  void dispose() {
+    // `dispose` must stay synchronous so `super.dispose()` is reached before
+    // Flutter finalizes the State lifecycle.
+    unawaited(_destroyModule());
 
     _cachedWidget = null;
+
+    super.dispose();
   }
 
-  Future<void> onPop(bool isDestroyed) async {
-    await ddi.destroy(qualifier: moduleQualifier);
-    this.isDestroyed = isDestroyed;
+  Future<void> _destroyModule({Object? contextQualifier}) async {
+    // Destroy the registered module when the widget is disposed
+    // If you don't provide a custom `routeQualifier`, the module will be
+    // destroyed with its default qualifier.
+    if (isDestroyed) {
+      return;
+    }
+
+    isDestroyed = true;
+
+    await ddi.destroy<FlutterDDIOutletModule>(
+      qualifier: moduleRouterQualifier,
+      context: contextQualifier,
+    );
 
     await Future.wait(_module.interceptors.map((e) => e.destroy()));
+  }
+
+  Future<void> onPop() {
+    return _destroyModule(contextQualifier: moduleContextQualifier);
   }
 
   @override
@@ -101,42 +109,43 @@ class _FlutterDDIOutletLoaderState extends State<FlutterDDIOutletLoader> {
         future: _completer.future,
         builder: (context, snapshot) {
           return switch ((snapshot.hasError, snapshot.connectionState)) {
-            (true, _) => _error ??
-                ddi.getOptionalWith<ErrorModuleInterface, AsyncSnapshot>(
-                    parameter: snapshot) ??
-                Scaffold(
-                  backgroundColor: Colors.red,
-                  body: Center(
-                    child: Text(snapshot.error.toString()),
+            (true, _) =>
+              _error ??
+                  ddi.getOptionalWith<ErrorModuleInterface, AsyncSnapshot>(parameter: snapshot) ??
+                  Scaffold(
+                    backgroundColor: Colors.red,
+                    body: Center(
+                      child: Text(snapshot.error.toString()),
+                    ),
                   ),
-                ),
             (false, ConnectionState.done) => _cachedWidget ??= Navigator(
-                key: _module.navigatorKey,
-                initialRoute: _module.path,
-                onGenerateRoute: (settings) {
-                  if ([_module.path, '/'].contains(settings.name)) {
-                    return MaterialPageRoute(
-                      builder: (context) => _module.page(context),
-                      settings: settings,
-                    );
-                  }
+              key: _module.navigatorKey,
+              initialRoute: _module.path,
+              onGenerateRoute: (settings) {
+                if ([_module.path, '/'].contains(settings.name)) {
+                  return MaterialPageRoute(
+                    builder: (context) => _module.page(context),
+                    settings: settings,
+                  );
+                }
 
-                  final builder = _routes[settings.name];
+                final builder = _routes[settings.name];
 
-                  if (builder != null) {
-                    return MaterialPageRoute(
-                      builder: builder,
-                      settings: settings,
-                    );
-                  }
-                  return null;
-                },
-              ),
-            _ => _loading ??
-                ddi.getOptional<LoaderModuleInterface>() ??
-                const Center(
-                  child: CircularProgressIndicator(),
-                ),
+                if (builder != null) {
+                  return MaterialPageRoute(
+                    builder: builder,
+                    settings: settings,
+                  );
+                }
+                return null;
+              },
+            ),
+            _ =>
+              _loading ??
+                  ddi.getOptional<LoaderModuleInterface>() ??
+                  const Center(
+                    child: CircularProgressIndicator(),
+                  ),
           };
         },
       ),

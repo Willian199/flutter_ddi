@@ -41,8 +41,7 @@ final class FlutterDDIBuilder<BeanT extends Object> extends StatefulWidget {
   State<FlutterDDIBuilder> createState() => _FlutterDDIBuilderState<BeanT>();
 }
 
-class _FlutterDDIBuilderState<BeanT extends Object>
-    extends State<FlutterDDIBuilder> {
+class _FlutterDDIBuilderState<BeanT extends Object> extends State<FlutterDDIBuilder> {
   final Completer completer = Completer();
 
   bool isDestroyed = false;
@@ -90,9 +89,9 @@ class _FlutterDDIBuilderState<BeanT extends Object>
     super.dispose();
   }
 
-  Future<void> onPop(bool isDestroyed) async {
+  Future<void> onPop() async {
     await ddi.destroy(qualifier: widget.moduleName ?? BeanT);
-    this.isDestroyed = isDestroyed;
+    isDestroyed = true;
   }
 
   @override
@@ -104,22 +103,22 @@ class _FlutterDDIBuilderState<BeanT extends Object>
         future: completer.future,
         builder: (context, AsyncSnapshot snapshot) {
           return switch ((snapshot.hasError, snapshot.connectionState)) {
-            (true, _) => widget.error ??
-                ddi.getOptionalWith<ErrorModuleInterface, AsyncSnapshot>(
-                    parameter: snapshot) ??
-                Scaffold(
-                  backgroundColor: Colors.red,
-                  body: Center(
-                    child: Text(snapshot.error.toString()),
+            (true, _) =>
+              widget.error ??
+                  ddi.getOptionalWith<ErrorModuleInterface, AsyncSnapshot>(parameter: snapshot) ??
+                  Scaffold(
+                    backgroundColor: Colors.red,
+                    body: Center(
+                      child: Text(snapshot.error.toString()),
+                    ),
                   ),
-                ),
-            (false, ConnectionState.done) => _cachedWidget ??=
-                widget.child(context),
-            _ => widget.loading ??
-                ddi.getOptional<LoaderModuleInterface>() ??
-                const Center(
-                  child: CircularProgressIndicator(),
-                ),
+            (false, ConnectionState.done) => _cachedWidget ??= widget.child(context),
+            _ =>
+              widget.loading ??
+                  ddi.getOptional<LoaderModuleInterface>() ??
+                  const Center(
+                    child: CircularProgressIndicator(),
+                  ),
           };
         },
       ),

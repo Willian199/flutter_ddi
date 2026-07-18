@@ -20,9 +20,7 @@ extension FlutterDDIRouterExtension on FlutterDDIRouter {
     return Map.fromEntries(modules.expand((sub) => _buildModules(sub).entries));
   }
 
-  static Map<String, WidgetBuilder>
-      _buildModules<T extends FlutterDDIModuleDefine>(T module,
-          [String? extraPath]) {
+  static Map<String, WidgetBuilder> _buildModules<T extends FlutterDDIModuleDefine>(T module, [String? extraPath]) {
     assert(module.path.isNotEmpty, 'Module path cannot be empty');
     String path = module.path;
 
@@ -34,16 +32,15 @@ extension FlutterDDIRouterExtension on FlutterDDIRouter {
 
     return switch (module) {
       final FlutterDDIOutletModule m => {
-          path: (_) => FlutterDDIOutletLoader(module: m),
-        },
+        path: (_) => FlutterDDIOutletLoader(module: m),
+      },
       final FlutterDDIRouter m => {
-          path: (_) => FlutterDDIRouterLoader(module: m),
-          ...Map.fromEntries(
-              m.modules.expand((sub) => _buildModules(sub, path).entries)),
-        },
+        path: (_) => FlutterDDIRouterLoader(module: m),
+        ...Map.fromEntries(m.modules.expand((sub) => _buildModules(sub, path).entries)),
+      },
       final FlutterDDIPage m => {
-          path: (_) => FlutterDDIRouterLoader(module: m),
-        },
+        path: (_) => FlutterDDIRouterLoader(module: m),
+      },
     };
   }
 }

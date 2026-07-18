@@ -5,8 +5,7 @@ import 'mocks/test_mocks.dart';
 
 void main() {
   group('FlutterDDIBuilder Tests', () {
-    testWidgets('should register module successfully',
-        (WidgetTester tester) async {
+    testWidgets('should register module successfully', (WidgetTester tester) async {
       bool moduleRegistered = false;
 
       await tester.pumpWidget(
@@ -27,8 +26,7 @@ void main() {
       expect(ddi.isRegistered<MockTestModule>(), isTrue);
     });
 
-    testWidgets('should register module with custom qualifier',
-        (WidgetTester tester) async {
+    testWidgets('should register module with custom qualifier', (WidgetTester tester) async {
       const qualifier = 'custom_qualifier';
 
       await tester.pumpWidget(
@@ -46,8 +44,7 @@ void main() {
       expect(ddi.isRegistered<MockTestModule>(qualifier: qualifier), isTrue);
     });
 
-    testWidgets('should dispose module when widget is disposed',
-        (WidgetTester tester) async {
+    testWidgets('should dispose module when widget is disposed', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: FlutterDDIBuilder<MockTestModule>(
@@ -67,8 +64,7 @@ void main() {
       expect(ddi.isRegistered<MockTestModule>(), isFalse);
     });
 
-    testWidgets('should show default loading indicator initially',
-        (WidgetTester tester) async {
+    testWidgets('should show default loading indicator initially', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: FlutterDDIBuilder<MockTestModule>(
@@ -83,8 +79,7 @@ void main() {
       expect(find.text('Test'), findsNothing);
     });
 
-    testWidgets('should show custom loading widget',
-        (WidgetTester tester) async {
+    testWidgets('should show custom loading widget', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: FlutterDDIBuilder<MockTestModule>(
@@ -99,8 +94,7 @@ void main() {
       expect(find.text('Test'), findsNothing);
     });
 
-    testWidgets('should show child after loading completes',
-        (WidgetTester tester) async {
+    testWidgets('should show child after loading completes', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: FlutterDDIBuilder<MockTestModule>(
@@ -116,8 +110,7 @@ void main() {
       expect(find.text('Test'), findsOneWidget);
     });
 
-    testWidgets('should show default error widget on initialization failure',
-        (WidgetTester tester) async {
+    testWidgets('should show default error widget on initialization failure', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: FlutterDDIBuilder<MockErrorModule>(
@@ -130,8 +123,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(Scaffold), findsOneWidget);
-      expect(find.text('Exception: MockErrorModule initialization failed'),
-          findsOneWidget);
+      expect(find.text('Exception: MockErrorModule initialization failed'), findsOneWidget);
       expect(find.text('Test'), findsNothing);
     });
 
@@ -152,8 +144,7 @@ void main() {
       expect(find.text('Test'), findsNothing);
     });
 
-    testWidgets('should show error widget with error message',
-        (WidgetTester tester) async {
+    testWidgets('should show error widget with error message', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: FlutterDDIBuilder<MockErrorModule>(
@@ -165,12 +156,10 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('MockErrorModule initialization failed'),
-          findsOneWidget);
+      expect(find.textContaining('MockErrorModule initialization failed'), findsOneWidget);
     });
 
-    testWidgets('should handle multiple module registrations',
-        (WidgetTester tester) async {
+    testWidgets('should handle multiple module registrations', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Column(
@@ -195,8 +184,7 @@ void main() {
       expect(ddi.isRegistered<MockTestModule>(qualifier: 'module2'), isTrue);
     });
 
-    testWidgets('should handle rapid widget rebuilds',
-        (WidgetTester tester) async {
+    testWidgets('should handle rapid widget rebuilds', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: FlutterDDIBuilder<MockTestModule>(
@@ -215,8 +203,7 @@ void main() {
       expect(ddi.isRegistered<MockTestModule>(), isTrue);
     });
 
-    testWidgets('should work with MaterialApp navigation',
-        (WidgetTester tester) async {
+    testWidgets('should work with MaterialApp navigation', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: FlutterDDIBuilder<MockTestModule>(
@@ -235,8 +222,7 @@ void main() {
       expect(find.text('Test Body'), findsOneWidget);
     });
 
-    testWidgets('should handle context extensions',
-        (WidgetTester tester) async {
+    testWidgets('should handle context extensions', (WidgetTester tester) async {
       // Register a service
       ddi.singleton<MockTestService>(() => MockTestService());
 

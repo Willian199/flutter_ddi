@@ -24,10 +24,10 @@ sealed class FlutterDDIModuleDefine with PreDestroy {
   /// for this module.
   WidgetBuilder get page;
 
-  /// Get the qualifier for this module.
+  /// Qualifier used by Flutter DDI to register and destroy this module.
   ///
-  /// Used internally by the DDI system to identify this module instance.
-  Object get moduleQualifier => runtimeType;
+  /// Defaults to [runtimeType].
+  Object get routeQualifier => runtimeType;
 
   /// Get the list of interceptors for this module.
   ///
@@ -104,7 +104,9 @@ abstract class FlutterDDIPage extends FlutterDDIModuleDefine {
 
   @override
   Future<void> destroy() async {
-    await ddi.destroy(qualifier: moduleQualifier);
+    await ddi.destroy(
+      qualifier: routeQualifier,
+    );
 
     Navigator.of(context).pop();
   }
@@ -133,7 +135,13 @@ class _FactoryFlutterDDIPage extends FlutterDDIPage {
 ///
 /// This class allows you to create modules that can contain other modules
 /// and manage their dependencies through the DDI system.
-abstract class FlutterDDIModuleRouter = FlutterDDIRouter with DDIModule;
+///
+/// By default, module children are isolated in a dedicated DDI context that
+/// matches [moduleQualifier].
+abstract class FlutterDDIModuleRouter extends FlutterDDIRouter with DDIModule {
+  @override
+  Object? get contextQualifier => moduleQualifier;
+}
 
 /// Abstract class representing a Flutter router with dependency injection.
 /// This class should be extended to define a router that can contain other modules.
@@ -158,7 +166,9 @@ abstract class FlutterDDIRouter extends FlutterDDIModuleDefine {
 
   @override
   Future<void> destroy() async {
-    await ddi.destroy<FlutterDDIModuleDefine>(qualifier: moduleQualifier);
+    await ddi.destroy<FlutterDDIModuleDefine>(
+      qualifier: routeQualifier,
+    );
 
     Navigator.of(context).pop();
   }
@@ -182,10 +192,7 @@ abstract class FlutterDDIOutletModule extends FlutterDDIRouter {
   /// [arguments] - Optional arguments to pass to the route.
   ///
   /// Returns a Future that completes when the navigation is finished.
-  Future<T?> navigateTo<T extends Object?>(String routeName,
-      {Object? arguments}) {
-    return navigatorKey.currentState
-            ?.pushNamed<T>(routeName, arguments: arguments) ??
-        Future.value();
+  Future<T?> navigateTo<T extends Object?>(String routeName, {Object? arguments}) {
+    return navigatorKey.currentState?.pushNamed<T>(routeName, arguments: arguments) ?? Future.value();
   }
 }

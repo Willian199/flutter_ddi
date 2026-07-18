@@ -34,8 +34,8 @@ class WidgetFactory<BeanT extends Widget> extends DDIBaseFactory<BeanT> {
     required CustomBuilder<FutureOr<BeanT>> builder,
     bool canDestroy = true,
     super.selector,
-  })  : _builder = builder,
-        _canDestroy = canDestroy;
+  }) : _builder = builder,
+       _canDestroy = canDestroy;
 
   /// The factory builder responsible for creating the Bean.
   final CustomBuilder<FutureOr<BeanT>> _builder;
@@ -125,8 +125,7 @@ class WidgetFactory<BeanT extends Widget> extends DDIBaseFactory<BeanT> {
     if (widgetInstance is PostConstruct) {
       (widgetInstance as PostConstruct).onPostConstruct();
     } else if (widgetInstance is Future<PostConstruct>) {
-      final PostConstruct postConstruct =
-          await (widgetInstance as Future<PostConstruct>);
+      final PostConstruct postConstruct = await (widgetInstance as Future<PostConstruct>);
 
       await postConstruct.onPostConstruct();
     }
@@ -162,9 +161,12 @@ class WidgetFactory<BeanT extends Widget> extends DDIBaseFactory<BeanT> {
   }
 
   void _checkState(Object qualifier) {
-    if (_state == BeanStateEnum.beingDestroyed ||
-        _state == BeanStateEnum.destroyed) {
+    if (_state == BeanStateEnum.beingDestroyed || _state == BeanStateEnum.destroyed) {
       throw BeanDestroyedException(qualifier.toString());
     }
   }
+
+  /// Indicates whether this factory supports destroy/removal from container.
+  @override
+  bool get canDestroy => true;
 }

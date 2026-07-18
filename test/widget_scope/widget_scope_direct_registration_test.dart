@@ -15,8 +15,7 @@ void main() {
       );
 
       expect(ddi.isRegistered<MockTestWidget>(), isTrue);
-      expect(ddi.isReady<MockTestWidget>(),
-          isFalse); // Always false for WidgetFactory
+      expect(ddi.isReady<MockTestWidget>(), isFalse); // Always false for WidgetFactory
       expect(ddi.isFuture<MockTestWidget>(), isFalse);
 
       // Get first instance
@@ -157,8 +156,7 @@ void main() {
       expect(ddi.isRegistered<MockTestWidget>(), isFalse);
     });
 
-    test('should throw exception when trying to get destroyed widget',
-        () async {
+    test('should throw exception when trying to get destroyed widget', () async {
       await ddi.register<MockTestWidget>(
         factory: WidgetFactory<MockTestWidget>(
           builder: MockTestWidget.new.builder,
@@ -201,8 +199,7 @@ void main() {
       expect(
         sw.elapsedMilliseconds,
         lessThan(1100),
-        reason:
-            'Should resolve 10,000,000 instances in under 1100ms on a modern CPU.',
+        reason: 'Should resolve 10,000,000 instances in under 1100ms on a modern CPU.',
       );
 
       ddi.destroy<MockPostConstructCount>();

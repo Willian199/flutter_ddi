@@ -5,8 +5,7 @@ import 'mocks/test_mocks.dart';
 
 void main() {
   group('ListenableState Tests', () {
-    testWidgets('should listen to changes and rebuild',
-        (WidgetTester tester) async {
+    testWidgets('should listen to changes and rebuild', (WidgetTester tester) async {
       // Register the ChangeNotifier
       ddi.singleton<MockTestChangeNotifier>(() => MockTestChangeNotifier());
 
@@ -21,8 +20,7 @@ void main() {
       expect(find.text('Count: 0'), findsOneWidget);
 
       // Trigger change
-      final state = tester
-          .state<MockListenableWidgetState>(find.byType(MockListenableWidget));
+      final state = tester.state<MockListenableWidgetState>(find.byType(MockListenableWidget));
       state.increment();
 
       await tester.pumpAndSettle();
@@ -34,8 +32,7 @@ void main() {
       expect(ddi.isRegistered<MockTestChangeNotifier>(), isFalse);
     });
 
-    testWidgets('should handle multiple state changes',
-        (WidgetTester tester) async {
+    testWidgets('should handle multiple state changes', (WidgetTester tester) async {
       ddi.singleton<MockTestChangeNotifier>(() => MockTestChangeNotifier());
 
       await tester.pumpWidget(
@@ -46,8 +43,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final state = tester
-          .state<MockListenableWidgetState>(find.byType(MockListenableWidget));
+      final state = tester.state<MockListenableWidgetState>(find.byType(MockListenableWidget));
 
       // Multiple increments
       state.increment();
@@ -67,8 +63,7 @@ void main() {
       expect(ddi.isRegistered<MockTestChangeNotifier>(), isFalse);
     });
 
-    testWidgets('should handle decrement operations',
-        (WidgetTester tester) async {
+    testWidgets('should handle decrement operations', (WidgetTester tester) async {
       ddi.singleton<MockTestChangeNotifier>(() => MockTestChangeNotifier());
 
       await tester.pumpWidget(
@@ -79,8 +74,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final state = tester
-          .state<MockListenableWidgetState>(find.byType(MockListenableWidget));
+      final state = tester.state<MockListenableWidgetState>(find.byType(MockListenableWidget));
 
       // Increment first
       state.increment();
@@ -108,8 +102,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final state = tester
-          .state<MockListenableWidgetState>(find.byType(MockListenableWidget));
+      final state = tester.state<MockListenableWidgetState>(find.byType(MockListenableWidget));
 
       // Increment multiple times
       state.increment();
@@ -128,8 +121,7 @@ void main() {
       expect(ddi.isRegistered<MockTestChangeNotifier>(), isFalse);
     });
 
-    testWidgets('should properly dispose listeners',
-        (WidgetTester tester) async {
+    testWidgets('should properly dispose listeners', (WidgetTester tester) async {
       ddi.singleton<MockTestChangeNotifier>(() => MockTestChangeNotifier());
 
       await tester.pumpWidget(
@@ -152,8 +144,7 @@ void main() {
       expect(ddi.isRegistered<MockTestChangeNotifier>(), isFalse);
     });
 
-    testWidgets('should handle widget disposal and recreation',
-        (WidgetTester tester) async {
+    testWidgets('should handle widget disposal and recreation', (WidgetTester tester) async {
       ddi.singleton<MockTestChangeNotifier>(() => MockTestChangeNotifier());
 
       // Create first widget
@@ -184,8 +175,7 @@ void main() {
       expect(ddi.isRegistered<MockTestChangeNotifier>(), isFalse);
     });
 
-    testWidgets('should handle missing ChangeNotifier gracefully',
-        (WidgetTester tester) async {
+    testWidgets('should handle missing ChangeNotifier gracefully', (WidgetTester tester) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: MockListenableWidget(),
@@ -196,8 +186,7 @@ void main() {
       expect(tester.takeException(), isA<Exception>());
     });
 
-    testWidgets('should handle ChangeNotifier disposal',
-        (WidgetTester tester) async {
+    testWidgets('should handle ChangeNotifier disposal', (WidgetTester tester) async {
       ddi.singleton<MockTestChangeNotifier>(() => MockTestChangeNotifier());
 
       await tester.pumpWidget(
@@ -212,16 +201,14 @@ void main() {
       ddi.destroy<MockTestChangeNotifier>();
 
       // Try to trigger a change
-      final state = tester
-          .state<MockListenableWidgetState>(find.byType(MockListenableWidget));
+      final state = tester.state<MockListenableWidgetState>(find.byType(MockListenableWidget));
 
       // This should not cause an error
       state.increment();
       await tester.pumpAndSettle();
     });
 
-    testWidgets('should handle rapid state changes',
-        (WidgetTester tester) async {
+    testWidgets('should handle rapid state changes', (WidgetTester tester) async {
       ddi.singleton<MockTestChangeNotifier>(() => MockTestChangeNotifier());
 
       await tester.pumpWidget(
@@ -232,8 +219,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final state = tester
-          .state<MockListenableWidgetState>(find.byType(MockListenableWidget));
+      final state = tester.state<MockListenableWidgetState>(find.byType(MockListenableWidget));
 
       // Rapid state changes
       for (int i = 0; i < 10; i++) {
@@ -249,8 +235,7 @@ void main() {
       expect(ddi.isRegistered<MockTestChangeNotifier>(), isFalse);
     });
 
-    testWidgets('should handle multiple widgets with same ChangeNotifier',
-        (WidgetTester tester) async {
+    testWidgets('should handle multiple widgets with same ChangeNotifier', (WidgetTester tester) async {
       ddi.singleton<MockTestChangeNotifier>(() => MockTestChangeNotifier());
 
       await tester.pumpWidget(
@@ -270,8 +255,7 @@ void main() {
       expect(find.text('Count: 0'), findsNWidgets(3));
 
       // Trigger change on one widget
-      final state = tester.state<MockListenableWidgetState>(
-          find.byType(MockListenableWidget).first);
+      final state = tester.state<MockListenableWidgetState>(find.byType(MockListenableWidget).first);
       state.increment();
 
       await tester.pumpAndSettle();
@@ -284,8 +268,7 @@ void main() {
       expect(ddi.isRegistered<MockTestChangeNotifier>(), isFalse);
     });
 
-    testWidgets('should work with FlutterDDIBuilder',
-        (WidgetTester tester) async {
+    testWidgets('should work with FlutterDDIBuilder', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: FlutterDDIBuilder<MockTestChangeNotifier>(
@@ -299,8 +282,7 @@ void main() {
 
       expect(find.text('Count: 0'), findsOneWidget);
 
-      final state = tester
-          .state<MockListenableWidgetState>(find.byType(MockListenableWidget));
+      final state = tester.state<MockListenableWidgetState>(find.byType(MockListenableWidget));
       state.increment();
 
       await tester.pumpAndSettle();
@@ -312,8 +294,7 @@ void main() {
       expect(ddi.isRegistered<MockTestChangeNotifier>(), isFalse);
     });
 
-    testWidgets('should work with context extensions',
-        (WidgetTester tester) async {
+    testWidgets('should work with context extensions', (WidgetTester tester) async {
       ddi.singleton<MockTestChangeNotifier>(() => MockTestChangeNotifier());
 
       await tester.pumpWidget(
@@ -338,8 +319,7 @@ void main() {
       expect(find.text('Count: 0'), findsOneWidget);
 
       // Trigger change
-      final state = tester
-          .state<MockListenableWidgetState>(find.byType(MockListenableWidget));
+      final state = tester.state<MockListenableWidgetState>(find.byType(MockListenableWidget));
       state.increment();
 
       await tester.pumpAndSettle();
