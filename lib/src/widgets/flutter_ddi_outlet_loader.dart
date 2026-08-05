@@ -31,7 +31,6 @@ class _FlutterDDIOutletLoaderState extends State<FlutterDDIOutletLoader> {
   late final FlutterDDIOutletModule _module = widget.module;
 
   late final Object moduleRouterQualifier = _module.routeQualifier;
-  late final Object? moduleContextQualifier = _module is DDIModule ? (_module as DDIModule).moduleQualifier : null;
 
   Widget? _error;
   Widget? _loading;
@@ -78,7 +77,7 @@ class _FlutterDDIOutletLoaderState extends State<FlutterDDIOutletLoader> {
     super.dispose();
   }
 
-  Future<void> _destroyModule({Object? contextQualifier}) async {
+  Future<void> _destroyModule() async {
     // Destroy the registered module when the widget is disposed
     // If you don't provide a custom `routeQualifier`, the module will be
     // destroyed with its default qualifier.
@@ -90,14 +89,13 @@ class _FlutterDDIOutletLoaderState extends State<FlutterDDIOutletLoader> {
 
     await ddi.destroy<FlutterDDIOutletModule>(
       qualifier: moduleRouterQualifier,
-      context: contextQualifier,
     );
 
     await Future.wait(_module.interceptors.map((e) => e.destroy()));
   }
 
   Future<void> onPop() {
-    return _destroyModule(contextQualifier: moduleContextQualifier);
+    return _destroyModule();
   }
 
   @override

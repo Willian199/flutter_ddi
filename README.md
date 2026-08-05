@@ -55,7 +55,11 @@ The `FlutterDDIModuleRouter` class is an abstraction that allows defining a modu
 
 #### Qualifiers and Context
 
-- `FlutterDDIModuleRouter` uses `routeQualifier` as its module qualifier API. Creating a new context.
+- `FlutterDDIModuleRouter` uses `routeQualifier` as the module qualifier. Because it
+  implements `DDIModule`, its `moduleQualifier` is used as the qualifier of a
+  dedicated DDI context for the module's dependencies. Dependencies registered
+  by the module are therefore isolated from sibling modules, while normal DDI
+  lookup still allows access to shared/root dependencies when appropriate.
 
 #### Example Usage:
 
@@ -429,7 +433,12 @@ class ParentWidget extends StatelessWidget {
 
 # Known Limitation
 
-`Circular Routes:` At present, the package does not fully support circular route structures. Defining circular dependencies between routes will lead to errors during the module registration process.
+`Circular Routes:` Nested routes are supported as long as the module graph is
+acyclic. DDI contexts isolate each module's dependencies and lifecycle, but do
+not change route graph traversal. If a router directly or indirectly contains
+itself, `getRoutes()` recursively traverses the cycle and can overflow instead
+of producing a route map. Define a tree/DAG of routes and keep shared
+dependencies in the root context.
 
 
 Any help, suggestions, corrections are welcome.
