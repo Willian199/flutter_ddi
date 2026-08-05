@@ -7,10 +7,13 @@ import 'package:example/page/details_screen.dart';
 import 'package:example/page/first_screen.dart';
 import 'package:example/page/home_screen.dart';
 import 'package:example/page/second_screen.dart';
+import 'package:example/platform_example_module.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ddi/flutter_ddi.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await ddi.object(ExamplePlatformModule());
   runApp(MyApp());
 }
 

@@ -14,6 +14,8 @@ export 'src/features/listener/flutter_ddi_listenable.dart';
 export 'src/interfaces/error_module_interface.dart';
 export 'src/interfaces/loader_module_interface.dart';
 export 'src/modules/flutter_ddi_modules_define.dart';
+export 'src/platform/ddi_environment_module.dart';
+export 'src/platform/ddi_platform_module.dart';
 export 'src/widgets/flutter_ddi_builder.dart';
 export 'src/widgets/flutter_ddi_module_loader.dart';
 export 'src/widgets/flutter_ddi_outlet_loader.dart';

@@ -1,3 +1,13 @@
+## 0.13.0
+* Added platform-aware module support through `DDIPlatformModule`.
+  Implementations can register platform-specific dependencies for Android, iOS,
+  Linux, macOS, Windows, Fuchsia, and Web.
+* Added `DDIEnvironmentModule` for compile-time feature flags using
+  `bool.fromEnvironment` and `--dart-define`.
+* Updated `FlutterDDIModuleRouter` documentation to describe contextual
+  dependency isolation and the limitation around circular route graphs.
+* Fixed cleanup of outlet modules that use a dedicated DDI context.
+
 ## 0.12.0 - Breaking Change
 * Removed `moduleQualifier` from `FlutterDDIModuleDefine`.
 * `routeQualifier` is now the module qualifier API in `FlutterDDIModuleDefine`.
