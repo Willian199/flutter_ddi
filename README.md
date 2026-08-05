@@ -23,6 +23,31 @@ The `flutter_ddi` offers a range of features that can be easily integrated into 
 
 ## Defining Modules and Routes
 
+### Compile-time environment modules
+
+For boolean feature flags that should support tree shaking, use
+`DDIEnvironmentModule` with `bool.fromEnvironment`:
+
+```dart
+class AnalyticsModule extends DDIEnvironmentModule {
+  AnalyticsModule()
+      : super(enabled: const bool.fromEnvironment('ENABLE_ANALYTICS'));
+
+  @override
+  Future<void> onEnabled() => singleton<Analytics>(Analytics.new);
+}
+```
+
+Pass the value at build time:
+
+```shell
+flutter build apk --dart-define=ENABLE_ANALYTICS=true
+```
+
+This is a compile-time flag, rather than a `.env` file loaded at runtime.
+Keep the module constructor and the `bool.fromEnvironment` expression
+compile-time constant so disabled registrations can be removed by the compiler.
+
 ### FlutterDDIModuleRouter
 The `FlutterDDIModuleRouter` class is an abstraction that allows defining a module to organize and encapsulate specific dependencies. It simplifies modular navigation and decouples dependency registration.
 
