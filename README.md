@@ -48,6 +48,40 @@ This is a compile-time flag, rather than a `.env` file loaded at runtime.
 Keep the module constructor and the `bool.fromEnvironment` expression
 compile-time constant so disabled registrations can be removed by the compiler.
 
+### Platform modules
+
+Use `DDIPlatformModule` to register platform-specific dependencies while keeping
+the platform implementations separate from the application module. The
+package selects the IO or Web implementation through a conditional export.
+
+```dart
+class PlatformModule with DDIModule, DDIPlatformModule {
+  @override
+  Future<void> onAndroid() async {
+    await singleton<PlatformService>(AndroidPlatformService.new);
+  }
+
+  @override
+  Future<void> onIos() async {
+    await singleton<PlatformService>(IosPlatformService.new);
+  }
+
+  @override
+  Future<void> onWeb() async {
+    await singleton<PlatformService>(WebPlatformService.new);
+  }
+}
+```
+
+Available callbacks are `onAndroid`, `onIos`, `onLinux`, `onMacOs`,
+`onWindows`, `onFuchsia`, and `onWeb`. Only the callback for the current
+platform is executed. In release/AOT builds, platform-constant branches and
+the implementation for the other compilation target can be removed by the
+compiler.
+
+If the module overrides `onPostConstruct` for additional initialization, call
+`super.onPostConstruct()` so the platform registration still runs.
+
 ### FlutterDDIModuleRouter
 The `FlutterDDIModuleRouter` class is an abstraction that allows defining a module to organize and encapsulate specific dependencies. It simplifies modular navigation and decouples dependency registration.
 

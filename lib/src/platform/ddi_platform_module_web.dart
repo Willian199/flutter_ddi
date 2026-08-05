@@ -14,7 +14,7 @@ mixin DDIPlatformModule on DDIModule {
 
   FutureOr<void> onLinux() {}
 
-  FutureOr<void> onMacos() {}
+  FutureOr<void> onMacOs() {}
 
   FutureOr<void> onWindows() {}
 

@@ -17,7 +17,7 @@ mixin DDIPlatformModule on DDIModule {
 
   FutureOr<void> onLinux() {}
 
-  FutureOr<void> onMacos() {}
+  FutureOr<void> onMacOs() {}
 
   FutureOr<void> onWindows() {}
 
@@ -43,7 +43,7 @@ mixin DDIPlatformModule on DDIModule {
     }
 
     if (Platform.isMacOS) {
-      await onMacos();
+      await onMacOs();
       return;
     }
 
